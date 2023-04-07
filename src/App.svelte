@@ -1,4 +1,7 @@
-import Pack from './components/Pack.svelte';
+<script>
+	import Pack from './lib/Pack.svelte';
+</script>
+
 <main>
-  <Pack />
+	<Pack />
 </main>
