@@ -1,8 +1,8 @@
-export default {
-	resolve: {
-	  alias: {
-		$lib: './src/lib',
-	  },
-	},
-  };
-  
+import { sveltekit } from '@sveltejs/kit/vite';
+
+/** @type {import('vite').UserConfig} */
+const config = {
+	plugins: [sveltekit()]
+};
+
+export default config;
