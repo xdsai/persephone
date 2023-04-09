@@ -1,5 +1,9 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
+  import { writable } from 'svelte/store';
+  import { spring } from 'svelte/motion';
+
+  
   let packOpened = false;
   let packTopEdge = 0;
   let packElement;
@@ -8,6 +12,7 @@
   let resetInterval;
   let dashedLineElement;
 
+
   onMount(() => {
     packTopEdge = packElement.getBoundingClientRect().top;
   });
@@ -15,6 +20,34 @@
   onDestroy(() => {
     clearInterval(resetInterval);
   });
+
+  let active = false;
+  let interacting = false;
+  let springRotate = spring({ x: 0, y: 0 }, { stiffness: 0.1, damping: 0.3 });
+  let springScale = spring(1, { stiffness: 0.1, damping: 0.3 });
+
+  const activePack = writable(null);
+
+  function interact(e) {
+    if (!active) {
+      active = true;
+      activePack.set(packElement);
+    }
+    interacting = true;
+    const rect = packElement.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    springRotate.set({ x: (y / rect.height) * 20 - 10, y: (x / rect.width) * -20 + 10 });
+    springScale.set(1.05);
+  }
+
+  function interactEnd() {
+    interacting = false;
+    active = false;
+    activePack.set(null);
+    springRotate.set({ x: 0, y: 0 });
+    springScale.set(1);
+  }
 
   function swipe(event, inContinuationBox = false) {
   const cursorPosY = event.clientY - packTopElement.getBoundingClientRect().bottom + 20;
@@ -68,9 +101,10 @@
     height: 700px;
     border-radius: 10px;
     cursor: pointer;
-    transition: transform 1s ease;
+    transition: transform 0.1s ease;
     background-image: url('/botPack.png'); /* Replace with your image URL */
     background-size: cover;
+    will-change: transform;
   }
 
   .pack.opened {
@@ -87,10 +121,9 @@
     background-size: cover;
   }
 
-  .pack-top::before {
-  content: '';
-  position: absolute;
-  clip-path: path('M 0 0 L 100% 0 L 100% calc(var(--curl, 100%) * 1%) L 0 100%');
+
+.pack:hover::before {
+  opacity: 1;
 }
 
 
@@ -134,7 +167,16 @@
 
 </style>
 
-<div class="pack" bind:this="{packElement}" on:mouseleave={resetPeel} class:opened={packOpened}>
+<div
+  class="pack"
+  bind:this="{packElement}"
+  on:mouseleave={resetPeel}
+  on:mousemove={interact}
+  on:mouseout={interactEnd}
+  class:opened={packOpened}
+  style="
+    transform-origin: center;
+    transform: rotateX({$springRotate.x}deg) rotateY({$springRotate.y}deg) scale({$springScale});">
   <div bind:this="{packTopElement}" class="pack-top"></div>
   <div class="starter-box" on:mousemove={(event) => swipe(event, false)} on:mouseleave={resetPeel}></div>
   <div class="dashed-line" bind:this="{dashedLineElement}"></div>
