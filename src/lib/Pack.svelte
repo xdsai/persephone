@@ -11,6 +11,7 @@
   let peeling = false;
   let resetInterval;
   let dashedLineElement;
+  let glareElement;
 
 
   onMount(() => {
@@ -39,6 +40,8 @@
     const y = e.clientY - rect.top;
     springRotate.set({ x: (y / rect.height) * 20 - 10, y: (x / rect.width) * -20 + 10 });
     springScale.set(1.05);
+    glareElement.style.opacity = 1;
+    glareElement.style.transform = `translate(${x - 200}px, ${y - 200}px)`; // Update the translation values
   }
 
   function interactEnd() {
@@ -47,6 +50,7 @@
     activePack.set(null);
     springRotate.set({ x: 0, y: 0 });
     springScale.set(1);
+    glareElement.style.opacity = 0;
   }
 
   function swipe(event, inContinuationBox = false) {
@@ -56,8 +60,8 @@
   if (cursorPosY >= 0 && cursorPosY <= 75 && cursorPosX <= 10 || peeling && inContinuationBox) {
     peeling = true;
     clearInterval(resetInterval);
-    dashedLineElement.style.opacity = 1 - (cursorPosX / packElement.clientWidth) - 0.9;
-    const rotation = (cursorPosX / packElement.clientWidth) * (cursorPosX / packElement.clientWidth) * 5;
+    dashedLineElement.style.opacity = 1 - (cursorPosX / packElement.clientWidth) - 0.95;
+    const rotation = (cursorPosX / packElement.clientWidth) * (cursorPosX / packElement.clientWidth) * 3;
     const scaleY = 1 - (cursorPosX / packElement.clientWidth) * 0.1;
     const transformOrigin = '100% 100%';
     packTopElement.style.transform = `rotate(${rotation}deg) scaleY(${scaleY})`;
@@ -95,6 +99,7 @@
 </script>
 
 <style>
+  
   .pack {
     position: relative;
     width: 405px;
@@ -105,7 +110,21 @@
     background-image: url('/botPack.png'); /* Replace with your image URL */
     background-size: cover;
     will-change: transform;
+    background-color: transparent;
   }
+  
+
+  .pack::before {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 7px;
+    right: 7px;
+    bottom: 0px;
+    border-radius: 10px;
+    z-index: -1;
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5), 1px 1px 0px rgba(0, 0, 0, 0.15);  }
+
 
   .pack.opened {
     transform: scaleY(0);
@@ -115,16 +134,28 @@
     position: absolute;
     width: 405px;
     height: 67px;
-    top: -67px;
+    top: -66px;
     overflow: hidden;
     background-image: url('/topPack.png'); /* Replace with your image URL */
     background-size: cover;
   }
 
-
-.pack:hover::before {
-  opacity: 1;
+  .glare {
+  position: absolute;
+  width: 400px; /* Adjust the width of the glare circle */
+  height: 400px; /* Adjust the height of the glare circle */
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 20%, transparent 80%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  clip-path: circle(50% at 50% 50%);
 }
+
+
+  .pack:hover::before {
+    opacity: 1;
+  }
 
 
   .starter-box, .continuation-box {
@@ -167,19 +198,15 @@
 
 </style>
 
-<div
-  class="pack"
-  bind:this="{packElement}"
-  on:mouseleave={resetPeel}
-  on:mousemove={interact}
-  on:mouseout={interactEnd}
-  class:opened={packOpened}
-  style="
-    transform-origin: center;
-    transform: rotateX({$springRotate.x}deg) rotateY({$springRotate.y}deg) scale({$springScale});">
-  <div bind:this="{packTopElement}" class="pack-top"></div>
-  <div class="starter-box" on:mousemove={(event) => swipe(event, false)} on:mouseleave={resetPeel}></div>
-  <div class="dashed-line" bind:this="{dashedLineElement}"></div>
-  <div class="continuation-box" on:mousemove={(event) => swipe(event, true)} on:mouseleave={resetPeel}></div>
+<div class="pack" bind:this="{packElement}" on:mouseleave={resetPeel} on:mousemove={interact} on:mouseout={interactEnd} class:opened={packOpened} style="transform-origin: center;transform: rotateX({$springRotate.x}deg) rotateY({$springRotate.y}deg) scale({$springScale});">
+  <div class="glare" bind:this="{glareElement}"></div>
+  <div bind:this="{packTopElement}" class="pack-top">
+  </div>
+  <div class="starter-box" on:mousemove={(event) => swipe(event, false)} on:mouseleave={resetPeel}>
+  </div>
+  <div class="dashed-line" bind:this="{dashedLineElement}">
+  </div>
+  <div class="continuation-box" on:mousemove={(event) => swipe(event, true)} on:mouseleave={resetPeel}>
+  </div>
 </div>
 
