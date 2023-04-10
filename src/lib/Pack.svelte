@@ -16,6 +16,8 @@
 
   onMount(() => {
     packTopEdge = packElement.getBoundingClientRect().top;
+    const backgroundVideo = document.getElementById('background-video');
+    backgroundVideo.playbackRate = 1; // Adjust the value to your desired playback speed
   });
 
   onDestroy(() => {
@@ -41,7 +43,7 @@
     springRotate.set({ x: (y / rect.height) * 20 - 10, y: (x / rect.width) * - 20 + 10 });
     springScale.set(1.05);
     glareElement.style.opacity = 1;
-    glareElement.style.transform = `translate(${x - 200}px, ${y - 200}px)`; // Update the translation values
+    glareElement.style.transform = `translate(${x - 250}px, ${y - 250}px)`; // Update the translation values
   }
 
   function interactEnd() {
@@ -107,7 +109,7 @@
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.1s ease;
-    background-image: url('/botPack.png'); /* Replace with your image URL */
+    background-image: url('/botPack.webp'); /* Replace with your image URL */
     background-size: cover;
     will-change: transform;
     background-color: transparent;
@@ -136,19 +138,19 @@
     height: 67px;
     top: -66px;
     overflow: hidden;
-    background-image: url('/topPack.png'); /* Replace with your image URL */
+    background-image: url('/topPack.webp'); /* Replace with your image URL */
     background-size: cover;
   }
 
   .glare {
   position: absolute;
-  width: 400px; /* Adjust the width of the glare circle */
-  height: 400px; /* Adjust the height of the glare circle */
+  width: 500px; /* Adjust the width of the glare circle */
+  height: 500px; /* Adjust the height of the glare circle */
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 20%, transparent 80%);
   mix-blend-mode: overlay;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0s ease;
   clip-path: circle(50% at 50% 50%);
 }
 
@@ -192,6 +194,20 @@
   transition: opacity 0.3s ease;
   transform: rotate(180deg);
 }
+#background-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -100;
+  object-fit: cover;
+}
+
+
 
 @keyframes snipping {
   0% {
@@ -204,8 +220,14 @@
 
 </style>
 
+<video id="background-video" autoplay loop muted playsinline>
+  <source src="/cPortal.webm" type="video/webm" />
+  Your browser does not support the video tag.
+</video>
+
+
 <div class="pack" bind:this="{packElement}" on:mouseleave={resetPeel} on:mousemove={interact} on:mouseout={interactEnd} class:opened={packOpened} style="transform-origin: center;transform: rotateX({$springRotate.x}deg) rotateY({$springRotate.y}deg) scale({$springScale});">
-  <div class="glare" bind:this="{glareElement}"></div>
+  <div class="glare" bind:this={glareElement}></div>
   <div bind:this="{packTopElement}" class="pack-top">
   </div>
   <div class="starter-box" on:mousemove={(event) => swipe(event, false)} on:mouseleave={resetPeel}>
