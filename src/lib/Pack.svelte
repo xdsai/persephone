@@ -38,7 +38,7 @@
     const rect = packElement.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    springRotate.set({ x: (y / rect.height) * 20 - 10, y: (x / rect.width) * -20 + 10 });
+    springRotate.set({ x: (y / rect.height) * 20 - 10, y: (x / rect.width) * - 20 + 10 });
     springScale.set(1.05);
     glareElement.style.opacity = 1;
     glareElement.style.transform = `translate(${x - 200}px, ${y - 200}px)`; // Update the translation values
@@ -54,10 +54,10 @@
   }
 
   function swipe(event, inContinuationBox = false) {
-  const cursorPosY = event.clientY - packTopElement.getBoundingClientRect().bottom + 20;
+  const cursorPosY = event.clientY - packTopElement.getBoundingClientRect().bottom + 45;
   const cursorPosX = event.clientX - packElement.getBoundingClientRect().left;
 
-  if (cursorPosY >= 0 && cursorPosY <= 75 && cursorPosX <= 10 || peeling && inContinuationBox) {
+  if (cursorPosY >= 0 && cursorPosY <= 90 && cursorPosX <= 10 || peeling && inContinuationBox) {
     peeling = true;
     clearInterval(resetInterval);
     dashedLineElement.style.opacity = 1 - (cursorPosX / packElement.clientWidth) - 0.95;
@@ -158,22 +158,28 @@
   }
 
 
-  .starter-box, .continuation-box {
+  .starter-box, .continuation-box, .end-box {
     position: absolute;
-    height: 75px;
+    height: 90px;
   }
 
   .starter-box {
     width: 10px;
     left: 0;
-    top: -30px;
+    top: -45px;
   }
 
   .continuation-box {
     width: 100%;
     left: 0;
-    top: -30px;
+    top: -45px;
   }
+  .end-box {
+    width: 50px;
+    right: 0;
+    top: -45px;
+  }
+
   .dashed-line {
   position: absolute;
   width: 100%;
@@ -207,6 +213,8 @@
   <div class="dashed-line" bind:this="{dashedLineElement}">
   </div>
   <div class="continuation-box" on:mousemove={(event) => swipe(event, true)} on:mouseleave={resetPeel}>
+  </div>
+  <div class="end-box">
   </div>
 </div>
 
