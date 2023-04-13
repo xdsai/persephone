@@ -12,6 +12,8 @@
   let resetInterval;
   let dashedLineElement;
   let glareElement;
+  const peelProgress = writable(0);
+
 
 
   onMount(() => {
@@ -52,7 +54,6 @@
     activePack.set(null);
     springRotate.set({ x: 0, y: 0 });
     springScale.set(1);
-    glareElement.style.opacity = 0;
   }
 
   function swipe(event, inContinuationBox = false) {
@@ -68,6 +69,7 @@
     const transformOrigin = '100% 100%';
     packTopElement.style.transform = `rotate(${rotation}deg) scaleY(${scaleY})`;
     packTopElement.style.transformOrigin = transformOrigin;
+    peelProgress.set(cursorPosX / packElement.clientWidth); + 30 // Add this line to update the peelProgress store
   } else {
     resetPeel();
   }
@@ -76,9 +78,12 @@
 
 
 
+
+
   function resetPeel() {
     if (!peeling) return;
     peeling = false;
+    peelProgress.set(0);
     clearInterval(resetInterval);
     resetInterval = setInterval(() => {
       let currentRotation = parseFloat(packTopElement.style.transform.slice(7, -4));
@@ -205,6 +210,8 @@
   }
 }
 
+
+
 </style>
 
 <video id="background-video" autoplay loop muted playsinline>
@@ -218,6 +225,7 @@
   </div>
   <div class="starter-box" on:mousemove={(event) => swipe(event, false)} on:mouseleave={resetPeel}>
   </div>
+  <div class="sparkle" style="--peel-progress: { $peelProgress }"></div>  
   <div class="dashed-line" bind:this="{dashedLineElement}">
   </div>
   <div class="continuation-box" on:mousemove={(event) => swipe(event, true)} on:mouseleave={resetPeel}>
