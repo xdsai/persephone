@@ -142,19 +142,6 @@
     background-size: cover;
   }
 
-  .glare {
-  position: absolute;
-  width: 500px; /* Adjust the width of the glare circle */
-  height: 500px; /* Adjust the height of the glare circle */
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 20%, transparent 80%);
-  mix-blend-mode: overlay;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0s ease;
-  clip-path: circle(50% at 50% 50%);
-}
-
-
   .pack:hover::before {
     opacity: 1;
   }
@@ -227,7 +214,6 @@
 
 
 <div class="pack" bind:this="{packElement}" on:mouseleave={resetPeel} on:mousemove={interact} on:mouseout={interactEnd} class:opened={packOpened} style="transform-origin: center;transform: rotateX({$springRotate.x}deg) rotateY({$springRotate.y}deg) scale({$springScale});">
-  <div class="glare" bind:this={glareElement}></div>
   <div bind:this="{packTopElement}" class="pack-top">
   </div>
   <div class="starter-box" on:mousemove={(event) => swipe(event, false)} on:mouseleave={resetPeel}>
