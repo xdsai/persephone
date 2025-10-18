@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0a0f25" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0a0f25" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<style>
+			html, body {
+				height: 100%;
+				overflow: hidden;
+			}
+		</style>
+		<meta http-equiv="content-security-policy" content="">
+		<link rel="modulepreload" href="/_app/immutable/entry/start.d66a341e.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/index.17bb44e0.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/singletons.30ff4405.js">
+		<link rel="modulepreload" href="/_app/immutable/entry/app.199debd9.js">
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">
+			<script>
+				{
+					__sveltekit_1ktwwz5 = {
+						env: {},
+						base: "",
+						element: document.currentScript.parentElement
+					};
+
+					Promise.all([
+						import("/_app/immutable/entry/start.d66a341e.js"),
+						import("/_app/immutable/entry/app.199debd9.js")
+					]).then(([kit, app]) => {
+						kit.start(app, __sveltekit_1ktwwz5.element);
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>

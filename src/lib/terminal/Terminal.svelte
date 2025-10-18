@@ -521,8 +521,6 @@
   .y { color: #ffd27e; }
   .cmdline { color: #9ad1ff; }
   .cmdline .cmdtext { color: #ffffff; opacity: 0.9; }
-
-  .file { color: #9ad1ff; text-decoration: none; }
-  .file.dir { color: #7ee787; }
-  .file:hover { text-decoration: underline; }
+  .nav { color: #9ad1ff; text-decoration: none; }
+  .nav:hover { text-decoration: underline; }
 </style>
