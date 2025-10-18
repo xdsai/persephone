@@ -53,7 +53,12 @@ Useful places:
 - Zero-trust, identity, and least privilege`),
         { ...createFile("blog", "Open the personal blog"), link: "/blog" },
         createDir("projects", [
-          //createFile('homelab.md', 'Docker playground for experiments.')
+          { ...createFile("persephone", "personal webpage, vibecoded from scratch.\ni don't know any frontend"), link: "https://github.com/xdsai/persephone" }
+        ]),
+        createDir("socials", [
+          { ...createFile("github", "my github profile"), link: "https://github.com/xdsai" },
+          { ...createFile("linkedin", "my linkedin profile"), link: "https://www.linkedin.com/in/jndl/" },
+          { ...createFile("email", "email me something nice! no nigerian princes please"), link: "mailto:alex@jndl.dev" }
         ])
       ])
     ]),
@@ -63,7 +68,7 @@ Useful places:
 }
 const Terminal_svelte_svelte_type_style_lang = "";
 const css = {
-  code: "html, body{margin:0;background:radial-gradient(1200px 800px at 20% 20%, #0a0f25 0, rgba(2,3,10,0) 60%),\n                radial-gradient(900px 600px at 80% 60%, rgba(64,22,72,0.25) 0, rgba(1,2,8,0) 60%),\n                linear-gradient(120deg, #02030a, #090e22 58%, #010208);background-color:#0a0f25;color:#e7e4ff;font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;height:100%;overflow:hidden;-webkit-text-size-adjust:100%;overscroll-behavior:none}.terminal-wrap.svelte-go76ed.svelte-go76ed{position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);width:clamp(720px, 80vw, 1100px);height:clamp(420px, 58vh, 680px);display:grid;grid-template-rows:auto 1fr;border-radius:14px;box-shadow:0 28px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06) inset;overflow:hidden;background:#0b0f1e}@media(max-width: 720px){.terminal-wrap.svelte-go76ed.svelte-go76ed{width:100vw;height:100dvh;border-radius:0;margin:0}.terminal.svelte-go76ed.svelte-go76ed{font-size:12px;padding:10px;overscroll-behavior:contain}.titlebar.svelte-go76ed.svelte-go76ed{padding:8px 10px;font-size:11px}.readline.svelte-go76ed.svelte-go76ed{font-size:16px}}.titlebar.svelte-go76ed.svelte-go76ed{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));border-bottom:1px solid rgba(255,255,255,0.08);color:rgba(230,228,255,0.72);font-size:12px;letter-spacing:0.05em}.controls.svelte-go76ed.svelte-go76ed{display:flex;align-items:center;gap:8px}.dot.svelte-go76ed.svelte-go76ed{width:10px;height:10px;border-radius:50%;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,0.35) inset}.dot.r.svelte-go76ed.svelte-go76ed{background:#ff5f57}.dot.y.svelte-go76ed.svelte-go76ed{background:#ffbd2e}.dot.g.svelte-go76ed.svelte-go76ed{background:#28c840}.title.svelte-go76ed.svelte-go76ed{opacity:0.85}.uptime.svelte-go76ed.svelte-go76ed{opacity:0.6}.terminal.svelte-go76ed.svelte-go76ed{overflow:auto;padding:16px;line-height:1.5;font-size:14px;background:radial-gradient(80% 80% at 60% 10%, rgba(255,255,255,0.06), rgba(0,0,0,0) 40%), #0b0f1e}.row.svelte-go76ed.svelte-go76ed{white-space:pre-wrap;word-wrap:break-word}.row.svelte-go76ed+.row.svelte-go76ed{margin-top:6px}.row.input.svelte-go76ed.svelte-go76ed{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:8px}.readline.svelte-go76ed.svelte-go76ed{width:100%;background:transparent;color:#e7e4ff;border:none;outline:none;font:inherit}.prompt.svelte-go76ed.svelte-go76ed{color:#9cb6ff}.g.svelte-go76ed.svelte-go76ed{color:#7ee787}.y.svelte-go76ed.svelte-go76ed{color:#ffd27e}",
+  code: "html, body{margin:0;background:radial-gradient(1200px 800px at 20% 20%, #0a0f25 0, rgba(2,3,10,0) 60%),\n                radial-gradient(900px 600px at 80% 60%, rgba(64,22,72,0.25) 0, rgba(1,2,8,0) 60%),\n                linear-gradient(120deg, #02030a, #090e22 58%, #010208);background-color:#0a0f25;color:#e7e4ff;font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;height:100%;overflow:hidden;-webkit-text-size-adjust:100%;overscroll-behavior:none}.terminal-wrap.svelte-xrnlp5.svelte-xrnlp5{position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);width:clamp(720px, 80vw, 1100px);height:clamp(420px, 58vh, 680px);display:grid;grid-template-rows:auto 1fr;border-radius:14px;box-shadow:0 28px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06) inset;overflow:hidden;background:#0b0f1e}@media(max-width: 720px){.terminal-wrap.svelte-xrnlp5.svelte-xrnlp5{width:100vw;height:100dvh;border-radius:0;margin:0}.terminal.svelte-xrnlp5.svelte-xrnlp5{font-size:12px;padding:10px;overscroll-behavior:contain}.titlebar.svelte-xrnlp5.svelte-xrnlp5{padding:8px 10px;font-size:11px}.readline.svelte-xrnlp5.svelte-xrnlp5{font-size:16px}}.titlebar.svelte-xrnlp5.svelte-xrnlp5{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));border-bottom:1px solid rgba(255,255,255,0.08);color:rgba(230,228,255,0.72);font-size:12px;letter-spacing:0.05em}.controls.svelte-xrnlp5.svelte-xrnlp5{display:flex;align-items:center;gap:8px}.dot.svelte-xrnlp5.svelte-xrnlp5{width:10px;height:10px;border-radius:50%;display:inline-block;box-shadow:0 0 0 1px rgba(0,0,0,0.35) inset}.dot.r.svelte-xrnlp5.svelte-xrnlp5{background:#ff5f57}.dot.y.svelte-xrnlp5.svelte-xrnlp5{background:#ffbd2e}.dot.g.svelte-xrnlp5.svelte-xrnlp5{background:#28c840}.title.svelte-xrnlp5.svelte-xrnlp5{opacity:0.85}.uptime.svelte-xrnlp5.svelte-xrnlp5{opacity:0.6}.terminal.svelte-xrnlp5.svelte-xrnlp5{overflow:auto;padding:16px;line-height:1.5;font-size:14px;background:radial-gradient(80% 80% at 60% 10%, rgba(255,255,255,0.06), rgba(0,0,0,0) 40%), #0b0f1e}.row.svelte-xrnlp5.svelte-xrnlp5{white-space:pre-wrap;word-wrap:break-word}.row.svelte-xrnlp5+.row.svelte-xrnlp5{margin-top:6px}.row.input.svelte-xrnlp5.svelte-xrnlp5{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:8px}.readline.svelte-xrnlp5.svelte-xrnlp5{width:100%;background:transparent;color:#e7e4ff;border:none;outline:none;font:inherit}.prompt.svelte-xrnlp5.svelte-xrnlp5{color:#9cb6ff}.g.svelte-xrnlp5.svelte-xrnlp5{color:#7ee787}.y.svelte-xrnlp5.svelte-xrnlp5{color:#ffd27e}",
   map: null
 };
 let hostname = "jndl";
@@ -88,14 +93,14 @@ const Terminal = create_ssr_component(($$result, $$props, $$bindings, slots) => 
   });
   $$result.css.add(css);
   promptText = `${username}@${hostname}:${formatPath(state.cwd)}$`;
-  return `<div class="terminal-wrap svelte-go76ed" tabindex="0" role="group" aria-label="web terminal"><div class="titlebar svelte-go76ed"><div class="controls svelte-go76ed"><span class="dot r svelte-go76ed"></span><span class="dot y svelte-go76ed"></span><span class="dot g svelte-go76ed"></span></div>
-    <span class="title svelte-go76ed">${escape(username)}@${escape(hostname)} — ${escape(formatPath(state.cwd))}</span>
-    <span class="uptime svelte-go76ed">up ${escape(uptimeMinutes)} min</span></div>
-  <div class="terminal svelte-go76ed"${add_attribute("this", term, 0)}>${each(rows, (r) => {
-    return `<div class="row svelte-go76ed"><!-- HTML_TAG_START -->${r.html}<!-- HTML_TAG_END --></div>`;
+  return `<div class="terminal-wrap svelte-xrnlp5" tabindex="0" role="group" aria-label="web terminal"><div class="titlebar svelte-xrnlp5"><div class="controls svelte-xrnlp5"><span class="dot r svelte-xrnlp5"></span><span class="dot y svelte-xrnlp5"></span><span class="dot g svelte-xrnlp5"></span></div>
+    <span class="title svelte-xrnlp5">${escape(username)}@${escape(hostname)} — ${escape(formatPath(state.cwd))}</span>
+    <span class="uptime svelte-xrnlp5">up ${escape(uptimeMinutes)} min</span></div>
+  <div class="terminal svelte-xrnlp5"${add_attribute("this", term, 0)}>${each(rows, (r) => {
+    return `<div class="row svelte-xrnlp5"><!-- HTML_TAG_START -->${r.html}<!-- HTML_TAG_END --></div>`;
   })}
-    <div class="row input svelte-go76ed"><span class="prompt svelte-go76ed" aria-hidden="true">${escape(promptText)}</span>
-      <input class="readline svelte-go76ed" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"${add_attribute("this", inputEl, 0)}${add_attribute("value", line, 0)}></div></div>
+    <div class="row input svelte-xrnlp5"><span class="prompt svelte-xrnlp5" aria-hidden="true">${escape(promptText)}</span>
+      <input class="readline svelte-xrnlp5" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"${add_attribute("this", inputEl, 0)}${add_attribute("value", line, 0)}></div></div>
 
   
 </div>`;

@@ -61,7 +61,11 @@
       }
     }
     println(`<span class="g">Welcome</span> — type <span class="y">help</span> to get started.`);
-    println('');
+    println(`<div class="onboard">Quick start:
+      <a href="#" class="cmd" data-cmd="ls">list files</a>
+      · <a href="/blog" class="nav">blog</a>
+      <div class="hint">Tip: use <b>ls</b> to list, <b>cat &lt;file&gt;</b> to read, <b>cd &lt;dir&gt;</b> to open</div>
+    </div>`);
   }
 
   function focusInput() {
@@ -392,25 +396,39 @@
   }
 
   function handleTerminalClick(e: MouseEvent) {
-    const el = (e.target as HTMLElement).closest('a.file') as HTMLAnchorElement | null;
-    if (!el) return;
-    e.preventDefault();
-    const path = el.getAttribute('data-path') || '';
-    const type = el.getAttribute('data-type');
-    if (type === 'dir') {
-      run(`cd ${path}`).then(() => run('ls'));
-    } else {
-      run(`cat ${path}`);
+    const target = e.target as HTMLElement;
+    const cmdEl = target.closest('a.cmd') as HTMLAnchorElement | null;
+    if (cmdEl) {
+      e.preventDefault();
+      const c = cmdEl.getAttribute('data-cmd') || '';
+      if (c) run(c);
+      return;
+    }
+    const navEl = target.closest('a.nav') as HTMLAnchorElement | null;
+    if (navEl) {
+      e.preventDefault();
+      const href = navEl.getAttribute('href') || '';
+      if (href) window.location.href = href;
     }
   }
 
   function handleTerminalKey(e: KeyboardEvent) {
-    const el = (e.target as HTMLElement).closest('a.file') as HTMLAnchorElement | null;
-    if (!el) return;
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    e.preventDefault();
-    // delegate to click handler
-    handleTerminalClick(e as unknown as MouseEvent);
+    const target = e.target as HTMLElement;
+    const isActivator = e.key === 'Enter' || e.key === ' ';
+    if (!isActivator) return;
+    const cmdEl = target.closest('a.cmd') as HTMLAnchorElement | null;
+    const navEl = target.closest('a.nav') as HTMLAnchorElement | null;
+    if (cmdEl) {
+      e.preventDefault();
+      const c = cmdEl.getAttribute('data-cmd') || '';
+      if (c) run(c);
+      return;
+    }
+    if (navEl) {
+      e.preventDefault();
+      const href = navEl.getAttribute('href') || '';
+      if (href) window.location.href = href;
+    }
   }
 
   onMount(() => {
@@ -523,4 +541,8 @@
   .cmdline .cmdtext { color: #ffffff; opacity: 0.9; }
   .nav { color: #9ad1ff; text-decoration: none; }
   .nav:hover { text-decoration: underline; }
+  .onboard { margin: 6px 0 10px; opacity: 0.9; }
+  .onboard .hint { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+  .onboard a.cmd { display: inline-block; padding: 2px 8px; border-radius: 999px; background: rgba(154,209,255,0.1); color: #9ad1ff; text-decoration: none; margin: 0 4px; }
+  .onboard a.cmd:hover { background: rgba(154,209,255,0.18); }
 </style>

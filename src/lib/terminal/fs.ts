@@ -105,7 +105,12 @@ export function defaultFs(): FsState {
         createFile('skills.md', `- Linux, networking, network security\n- AWS & Azure platform security\n- Scripting: Bash, Python, Powershell, C\n- Zero-trust, identity, and least privilege`),
         { ...createFile('blog', 'Open the personal blog'), link: '/blog' },
         createDir('projects', [
-          //createFile('homelab.md', 'Docker playground for experiments.')
+          {...createFile('persephone', 'personal webpage, vibecoded from scratch.\ni don\'t know any frontend :D'), link: 'https://github.com/xdsai/persephone'}
+        ]),
+        createDir('socials', [
+          {...createFile('github', 'my github profile'), link: 'https://github.com/xdsai'},
+          {...createFile('linkedin', 'my linkedin profile'), link: 'https://www.linkedin.com/in/jndl/'},
+          {...createFile('email', 'email me something nice! no nigerian princes please'), link: 'mailto:alex@jndl.dev'}
         ])
       ])
     ]),

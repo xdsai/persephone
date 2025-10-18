@@ -4,7 +4,7 @@ export const manifest = {
 	assets: new Set(["200.html","_redirects","blog/images/portal.jpg"]),
 	mimeTypes: {".html":"text/html",".jpg":"image/jpeg"},
 	_: {
-		client: {"start":{"file":"_app/immutable/entry/start.afcb5941.js","imports":["_app/immutable/entry/start.afcb5941.js","_app/immutable/chunks/index.17bb44e0.js","_app/immutable/chunks/singletons.de4e1084.js"],"stylesheets":[],"fonts":[]},"app":{"file":"_app/immutable/entry/app.e9499639.js","imports":["_app/immutable/entry/app.e9499639.js","_app/immutable/chunks/index.17bb44e0.js"],"stylesheets":[],"fonts":[]}},
+		client: {"start":{"file":"_app/immutable/entry/start.b587965c.js","imports":["_app/immutable/entry/start.b587965c.js","_app/immutable/chunks/index.17bb44e0.js","_app/immutable/chunks/singletons.fccd36f3.js"],"stylesheets":[],"fonts":[]},"app":{"file":"_app/immutable/entry/app.3b276fbf.js","imports":["_app/immutable/entry/app.3b276fbf.js","_app/immutable/chunks/index.17bb44e0.js"],"stylesheets":[],"fonts":[]}},
 		nodes: [
 			() => import('./nodes/0.js'),
 			() => import('./nodes/1.js'),

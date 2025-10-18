@@ -5,6 +5,6 @@ export const component = async () => (await import('../entries/pages/blog/_slug_
 export const file = '_app/immutable/entry/blog-_slug_-page.svelte.1b8540ff.js';
 export { universal };
 export const universal_id = "src/routes/blog/[slug]/+page.ts";
-export const imports = ["_app/immutable/entry/blog-_slug_-page.svelte.1b8540ff.js","_app/immutable/chunks/index.17bb44e0.js","_app/immutable/entry/blog-_slug_-page.ts.54b34298.js","_app/immutable/chunks/posts.e8be1936.js","_app/immutable/chunks/_page.87c396b5.js"];
+export const imports = ["_app/immutable/entry/blog-_slug_-page.svelte.1b8540ff.js","_app/immutable/chunks/index.17bb44e0.js","_app/immutable/entry/blog-_slug_-page.ts.b46fa99e.js","_app/immutable/chunks/posts.32e14c20.js","_app/immutable/chunks/_page.5b1b0056.js"];
 export const stylesheets = ["_app/immutable/assets/_page.fa8f2da5.css"];
 export const fonts = [];
