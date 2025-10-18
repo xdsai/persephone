@@ -470,10 +470,9 @@
     background-color: #0a0f25;
     color: #e7e4ff;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
     -webkit-text-size-adjust: 100%;
-    overscroll-behavior: none;
+    overflow-x: hidden;
   }
 
   .terminal-wrap {

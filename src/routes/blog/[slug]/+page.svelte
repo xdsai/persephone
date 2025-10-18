@@ -16,8 +16,14 @@
 {/if}
 
 <style>
-  :global(body) { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; }
-  .blog { max-width: 860px; margin: 5vh auto; padding: 0 16px; }
+  :global(html, body) {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    height: auto;
+    min-height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .blog { max-width: 860px; min-height: 100dvh; margin: 5vh auto; padding: 0 16px; }
   .back { display: inline-block; margin: 0 0 12px; color: #9ad1ff; text-decoration: none; }
   .back:hover { text-decoration: underline; }
   h1 { font-size: 28px; margin: 0 0 8px; }
