@@ -52,13 +52,8 @@
     if (stored) {
       state = stored;
     } else {
-      // Seed a few files the first time
-      const { node } = find(state.root, '/home/' + username);
-      if (node && node.type === 'dir') {
-        node.children.push(createDir('notes'));
-        node.children.push(createFile('todo.txt', '- replace this with greatness\n'));
-        save(state);
-      }
+      // Persist the default file system exactly as defined
+      save(state);
     }
     println(`<span class="g">Welcome</span> — type <span class="y">help</span> to get started.`);
     println(`<div class="onboard">Quick start:
