@@ -41,8 +41,7 @@
     save: 'save — save current Persephone run',
     load: 'load — load saved Persephone run',
     reset: 'reset — reset Persephone run',
-    'persephone --bloom': 'persephone --bloom — attempt to bloom the signal',
-    'whois alex': 'whois alex — post metadata + checksum hint'
+    'whois nine': 'whois nine — protagonist dossier'
   };
 
   // Story integration
@@ -131,10 +130,10 @@
     println(`<span class="g">Welcome</span> — type <span class="y">help</span> to get started.`);
     println(`<div class="onboard">Quick start:
       <a href="#" class="cmd" data-cmd="ls">list files</a>
+      · <a href="#" class="cmd" data-cmd="play">play the story</a>
       · <a href="/blog" class="nav">blog</a>
       <div class="hint">Tip: use <b>ls</b> to list, <b>cat &lt;file&gt;</b> to read, <b>cd &lt;dir&gt;</b> to open</div>
     </div>`);
-    println(`<div class="onboard"><span class="y">hints</span>: names resolve to records · six seeds bloom a signal</div>`);
   }
 
   function focusInput() {
@@ -266,11 +265,21 @@
         case 'whois': {
           await ensureStoryMeta();
           const target = (argsLower[0] || '').toLowerCase();
-          if (target === 'alex') {
-            if (!storyMeta?.webTieIn) { writeOut('whois: info unavailable'); break; }
-            const t = storyMeta.webTieIn;
-            const checksum = await sha256Hex(`${t.blogTitle}|${t.blogDate}`);
-            writeOut(`title: ${t.blogTitle}\ndate: ${t.blogDate}\nauthor: ${t.blogAuthor}\nsummary: ${t.summary || ''}\nchecksum: ${checksum.slice(0, 16)}…`);
+          if (target === 'nine' || target === 'alex') {
+            try {
+              const raw = localStorage.getItem(SAVE_KEY);
+              const save = raw ? JSON.parse(raw) : null;
+              const gotKey = !!(save?.state?.flags?.ghostKey);
+              const opDate = storyMeta?.date || '2077-08-13';
+              const opName = 'Vault Night';
+              const status = gotKey ? 'confirmed: Ghost Key acquired' : 'linked: Ghost Key operation in progress';
+              const blurb = gotKey
+                ? 'Protagonist who slipped into Acheron’s vault and pocketed the Ghost Key during Vault Night.'
+                : 'Protagonist preparing a breach on Acheron’s vault to lift the Ghost Key.';
+              writeOut(`name: Nine\nrole: protagonist\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
+            } catch {
+              writeOut('name: Nine\nrole: protagonist\nnotes: linked to the Ghost Key breach on Vault Night.');
+            }
           } else if (target === 'johnny') {
             try {
               const raw = localStorage.getItem('persephone-run-v1:save');
@@ -283,7 +292,7 @@
               }
             } catch { writeOut('record incomplete.'); }
           } else {
-            writeOut('whois: try `whois alex`');
+            writeOut('whois: try `whois nine`');
           }
           break;
         }
@@ -317,12 +326,22 @@
           break;
         }
         default:
-          if ((cmdLower + ' ' + (argsLower[0] || '')) === 'whois alex') {
+          if ((cmdLower + ' ' + (argsLower[0] || '')) === 'whois nine') {
             await ensureStoryMeta();
-            if (!storyMeta?.webTieIn) { writeOut('whois: info unavailable'); break; }
-            const t = storyMeta.webTieIn;
-            const checksum = await sha256Hex(`${t.blogTitle}|${t.blogDate}`);
-            writeOut(`title: ${t.blogTitle}\ndate: ${t.blogDate}\nauthor: ${t.blogAuthor}\nsummary: ${t.summary || ''}\nchecksum: ${checksum.slice(0, 16)}…`);
+            try {
+              const raw = localStorage.getItem(SAVE_KEY);
+              const save = raw ? JSON.parse(raw) : null;
+              const gotKey = !!(save?.state?.flags?.ghostKey);
+              const opDate = storyMeta?.date || '2077-08-13';
+              const opName = 'Vault Night';
+              const status = gotKey ? 'confirmed: Ghost Key acquired' : 'linked: Ghost Key operation in progress';
+              const blurb = gotKey
+                ? 'Protagonist who slipped into Acheron’s vault and pocketed the Ghost Key during Vault Night.'
+                : 'Protagonist preparing a breach on Acheron’s vault to lift the Ghost Key.';
+              writeOut(`name: Nine\nrole: protagonist\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
+            } catch {
+              writeOut('name: Nine\nrole: protagonist\nnotes: linked to the Ghost Key breach on Vault Night.');
+            }
           } else {
             writeOut(`${cmd}: command not found`);
           }
