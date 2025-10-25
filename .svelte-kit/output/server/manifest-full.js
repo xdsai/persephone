@@ -1,10 +1,10 @@
 export const manifest = {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["200.html","_redirects","blog/images/portal.jpg"]),
-	mimeTypes: {".html":"text/html",".jpg":"image/jpeg"},
+	assets: new Set(["200.html","_redirects","assets/persephone-run.json","blog/images/portal.jpg","story.json"]),
+	mimeTypes: {".html":"text/html",".json":"application/json",".jpg":"image/jpeg"},
 	_: {
-		client: {"start":{"file":"_app/immutable/entry/start.56bc7e88.js","imports":["_app/immutable/entry/start.56bc7e88.js","_app/immutable/chunks/index.17bb44e0.js","_app/immutable/chunks/singletons.d2757afc.js"],"stylesheets":[],"fonts":[]},"app":{"file":"_app/immutable/entry/app.495340a8.js","imports":["_app/immutable/entry/app.495340a8.js","_app/immutable/chunks/index.17bb44e0.js"],"stylesheets":[],"fonts":[]}},
+		client: {"start":{"file":"_app/immutable/entry/start.6010fc8b.js","imports":["_app/immutable/entry/start.6010fc8b.js","_app/immutable/chunks/index.0cd60f9d.js","_app/immutable/chunks/singletons.7f375911.js"],"stylesheets":[],"fonts":[]},"app":{"file":"_app/immutable/entry/app.9560ff65.js","imports":["_app/immutable/entry/app.9560ff65.js","_app/immutable/chunks/index.0cd60f9d.js"],"stylesheets":[],"fonts":[]}},
 		nodes: [
 			() => import('./nodes/0.js'),
 			() => import('./nodes/1.js'),

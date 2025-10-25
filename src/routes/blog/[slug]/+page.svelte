@@ -1,5 +1,19 @@
 <script lang="ts">
-  export let data: { post: { title: string; date: string; html: string } | null };
+  import PersephoneRun from '$lib/components/PersephoneRun.svelte';
+  import { onMount } from 'svelte';
+  export let data: { post: { title: string; date: string; html: string; slug?: string } | null };
+
+  const isPersephonePost = !!data.post && (data.post.slug === 'neon-thirteen-persephone-run' || (data.post.title || '').toLowerCase().includes('neon thirteen'));
+  let bannerActive = false;
+  onMount(() => {
+    try {
+      const raw = localStorage.getItem('persephone-run-v1:save');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        bannerActive = !!(parsed?.state?.flags?.blogPosted) && parsed?.state?.flags?.blogClean === false;
+      }
+    } catch {}
+  });
 </script>
 
 {#if !data.post}
@@ -12,6 +26,15 @@
     <article class="content">
       {@html data.post.html}
     </article>
+    {#if isPersephonePost}
+      {#if bannerActive}
+        <div class="banner">Signal live — try <code>persephone --bloom</code> in the terminal on the homepage.</div>
+      {/if}
+      <details class="game" id="persephone">
+        <summary>Play NEON THIRTEEN: PERSEPHONE RUN</summary>
+        <PersephoneRun src="/story.json" />
+      </details>
+    {/if}
   </main>
 {/if}
 
@@ -31,4 +54,7 @@
   .content :global(img) { max-width: 100%; border-radius: 8px; }
   .content :global(pre) { background: rgba(255,255,255,0.06); padding: 12px; border-radius: 6px; overflow:auto; }
   .content :global(code) { font-family: inherit; }
+  .game { margin: 16px 0 24px; }
+  .game > summary { cursor: pointer; margin: 10px 0; }
+  .banner { margin: 10px 0; background: rgba(126,231,135,0.08); border: 1px solid rgba(126,231,135,0.25); border-radius: 6px; padding: 6px 10px; font-size: 13px; }
 </style>

@@ -1,1 +1,0 @@
-import{l as o}from"./posts.edec2c8d.js";const t=async()=>({posts:o()}),s=Object.freeze(Object.defineProperty({__proto__:null,load:t},Symbol.toStringTag,{value:"Module"}));export{s as _,t as l};

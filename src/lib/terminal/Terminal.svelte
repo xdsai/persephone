@@ -35,8 +35,80 @@
     uname: 'uname — print kernel info',
     ip: 'ip — print public IP address',
     man: 'man <cmd> — show a short description',
-    resetfs: 'resetfs — reset filesystem to defaults (clears local storage)'
+    resetfs: 'resetfs — reset filesystem to defaults (clears local storage)',
+    play: 'play — open the Persephone story',
+    save: 'save — save current Persephone run',
+    load: 'load — load saved Persephone run',
+    reset: 'reset — reset Persephone run',
+    'persephone --bloom': 'persephone --bloom — attempt to bloom the signal',
+    'whois alex': 'whois alex — post metadata + checksum hint'
   };
+
+  // Story integration
+  import PersephoneRun from '$lib/components/PersephoneRun.svelte';
+  import { SAVE_KEY } from '$lib/game/engine';
+  let showGame = false;
+  let showARG = false;
+  let storyMeta: any = null;
+  let loreRegistry: Array<{ slug: string; title: string; summary?: string }>|null = null;
+  let argSave: any = null;
+
+  // small randomized glitch timings for subtle bar jitter
+  const barGlitchDur = 4 + Math.random() * 4; // 4–8s
+  const barGlitchDelay = Math.random() * 3;   // 0–3s
+  // keep glitch subtle; remove heavy scan animations for performance
+
+  function loadArgSave() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      argSave = raw ? JSON.parse(raw) : null;
+    } catch { argSave = null; }
+  }
+
+  async function ensureStoryMeta() {
+    if (storyMeta) return;
+    try {
+      const r = await fetch('/story.json');
+      if (r.ok) {
+        const j = await r.json();
+        storyMeta = j.meta || null;
+        loreRegistry = j.meta?.loreRegistry || null;
+        return;
+      }
+    } catch {}
+    try {
+      const r2 = await fetch('/assets/persephone-run.json');
+      const j2 = await r2.json();
+      storyMeta = j2.meta || null;
+      loreRegistry = j2.meta?.loreRegistry || null;
+    } catch {}
+  }
+
+  async function sha256Hex(s: string): Promise<string> {
+    // browser crypto
+    // @ts-ignore
+    if (typeof crypto?.subtle?.digest !== 'function') return 'sha256:unavailable';
+    const data = new TextEncoder().encode(s);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    const arr = Array.from(new Uint8Array(hash));
+    return arr.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Static ARG payload preview for the overlay
+  const argPayload = {
+    status: 'decrypted',
+    shards: 6,
+    hint: 'six seeds bloom a signal',
+    routes: ['/blog/welcome', '/']
+  };
+
+  function resolveLoreList(save: any) {
+    try {
+      const slugs: string[] = save?.state?.loreDiscoveries || [];
+      if (!Array.isArray(slugs) || !loreRegistry) return [];
+      return slugs.map((slug) => loreRegistry!.find((r) => r.slug === slug)).filter(Boolean);
+    } catch { return []; }
+  }
 
   $: promptText = `${username}@${hostname}:${formatPath(state.cwd)}$`;
 
@@ -61,17 +133,16 @@
       · <a href="/blog" class="nav">blog</a>
       <div class="hint">Tip: use <b>ls</b> to list, <b>cat &lt;file&gt;</b> to read, <b>cd &lt;dir&gt;</b> to open</div>
     </div>`);
+    println(`<div class="onboard"><span class="y">hints</span>: names resolve to records · six seeds bloom a signal</div>`);
   }
 
   function focusInput() {
     inputEl?.focus();
   }
 
-  function scrollToBottom() {
-    term?.scrollTo({ top: term.scrollHeight });
-  }
+  function scrollToBottom() { term?.scrollTo({ top: term.scrollHeight }); }
 
-  function println(html: string) { rows = [...rows, { html }]; tick().then(scrollToBottom); }
+  function println(html: string) { rows = [...rows, { html }]; tick().then(() => { scrollToBottom(); }); }
 
   async function run(cmdline: string) {
     const trimmed = cmdline.trim();
@@ -85,7 +156,9 @@
 
     const writeOut = (s: string, raw = false) => out.push({ text: s, raw });
     try {
-      switch (cmd) {
+      const cmdLower = (cmd || '').toLowerCase();
+      const argsLower = args.map((a) => (a || '').toLowerCase());
+      switch (cmdLower) {
         case 'help':
           writeOut(Object.keys(MAN).join(', '));
           break;
@@ -152,8 +225,91 @@
           writeOut(entry ? entry : `No manual entry for ${target}`);
           break;
         }
+        case 'play': {
+          await ensureStoryMeta();
+          showGame = true;
+          writeOut('opening game…');
+          break;
+        }
+        case 'save': {
+          writeOut('persephone: auto-saved (if a run is in progress).');
+          break;
+        }
+        case 'load': {
+          const has = !!localStorage.getItem(SAVE_KEY);
+          if (!has) { writeOut('persephone: no save found'); break; }
+          showGame = true;
+          writeOut('persephone: loaded (open window).');
+          break;
+        }
+        case 'reset': {
+          localStorage.removeItem(SAVE_KEY);
+          writeOut('persephone: save cleared');
+          break;
+        }
+        case 'whois': {
+          await ensureStoryMeta();
+          const target = (argsLower[0] || '').toLowerCase();
+          if (target === 'alex') {
+            if (!storyMeta?.webTieIn) { writeOut('whois: info unavailable'); break; }
+            const t = storyMeta.webTieIn;
+            const checksum = await sha256Hex(`${t.blogTitle}|${t.blogDate}`);
+            writeOut(`title: ${t.blogTitle}\ndate: ${t.blogDate}\nauthor: ${t.blogAuthor}\nsummary: ${t.summary || ''}\nchecksum: ${checksum.slice(0, 16)}…`);
+          } else if (target === 'johnny') {
+            try {
+              const raw = localStorage.getItem('persephone-run-v1:save');
+              const save = raw ? JSON.parse(raw) : null;
+              const hasLore = !!(save?.state?.loreDiscoveries || []).includes('johnny-silverhand');
+              if (hasLore) {
+                writeOut('record shows JOHNNY S— (silver tape wrapped on right hand).');
+              } else {
+                writeOut('record incomplete.');
+              }
+            } catch { writeOut('record incomplete.'); }
+          } else {
+            writeOut('whois: try `whois alex`');
+          }
+          break;
+        }
+        case 'persephone': {
+          if (argsLower[0] === '--bloom') {
+            await ensureStoryMeta();
+            try {
+              const raw = localStorage.getItem(SAVE_KEY);
+              if (!raw) { writeOut('no bloom: signal dormant'); break; }
+              const s = JSON.parse(raw);
+              const ok = !!(s?.state?.flags?.blogPosted) && s?.state?.flags?.blogClean === false;
+              if (ok) { showARG = true; writeOut('bloom: signal decrypted (open panel)'); loadArgSave(); }
+              else { writeOut('no bloom: signal dormant'); }
+            } catch { writeOut('no bloom: signal dormant'); }
+          } else {
+            writeOut('persephone: unknown flag');
+          }
+          break;
+        }
+        case 'pomegranate':
+        case 'kore13': {
+          await ensureStoryMeta();
+          try {
+            const raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) { writeOut('no bloom: signal dormant'); break; }
+            const s = JSON.parse(raw);
+            const ok = !!(s?.state?.flags?.blogPosted) && s?.state?.flags?.blogClean === false;
+            if (ok) { showARG = true; writeOut('bloom: signal decrypted (open panel)'); loadArgSave(); }
+            else { writeOut('no bloom: signal dormant'); }
+          } catch { writeOut('no bloom: signal dormant'); }
+          break;
+        }
         default:
-          writeOut(`${cmd}: command not found`);
+          if ((cmdLower + ' ' + (argsLower[0] || '')) === 'whois alex') {
+            await ensureStoryMeta();
+            if (!storyMeta?.webTieIn) { writeOut('whois: info unavailable'); break; }
+            const t = storyMeta.webTieIn;
+            const checksum = await sha256Hex(`${t.blogTitle}|${t.blogDate}`);
+            writeOut(`title: ${t.blogTitle}\ndate: ${t.blogDate}\nauthor: ${t.blogAuthor}\nsummary: ${t.summary || ''}\nchecksum: ${checksum.slice(0, 16)}…`);
+          } else {
+            writeOut(`${cmd}: command not found`);
+          }
       }
     } catch (e) {
       writeOut(String(e));
@@ -432,38 +588,97 @@
     const update = () => { uptimeMinutes = Math.floor((Date.now() - startTime.getTime()) / 60000); };
     update();
     uptimeTimer = (setInterval(update, 10000) as unknown as number);
+    if (typeof window !== 'undefined') window.addEventListener('persephone:save', loadArgSave);
   });
 
-  onDestroy(() => { if (uptimeTimer) clearInterval(uptimeTimer); });
+  onDestroy(() => { if (uptimeTimer) clearInterval(uptimeTimer); if (typeof window !== 'undefined') window.removeEventListener('persephone:save', loadArgSave); });
 </script>
 
 <div class="terminal-wrap" on:click={focusInput} on:keydown={(e)=>{ if(e.key.length===1 || e.key==='/'|| e.key===' ') focusInput(); }} tabindex="0" role="group" aria-label="web terminal">
   <div class="titlebar">
     <div class="controls"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
-    <span class="title">{username}@{hostname} — {formatPath(state.cwd)}</span>
+    <span class="title" style={`animation: glitch ${barGlitchDur.toFixed(2)}s infinite steps(2); animation-delay:${barGlitchDelay.toFixed(2)}s`}>{username}@{hostname} — {formatPath(state.cwd)}</span>
     <span class="uptime">up {uptimeMinutes} min</span>
   </div>
-  <div class="terminal" bind:this={term} on:click={handleTerminalClick} on:keydown={handleTerminalKey}>
-    {#each rows as r}
-      <div class="row">{@html r.html}</div>
-    {/each}
-    <div class="row input">
-      <span class="prompt" aria-hidden="true">{promptText}</span>
-      <input bind:this={inputEl} class="readline" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" bind:value={line} on:keydown={onKeyDown} />
+  <div class="term-pane">
+    <div class="terminal" bind:this={term} on:click={handleTerminalClick} on:keydown={handleTerminalKey}>
+      {#each rows as r}
+        <div class="row">{@html r.html}</div>
+      {/each}
+      <div class="row input">
+        <span class="prompt" aria-hidden="true">{promptText}</span>
+        <input bind:this={inputEl} class="readline" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" bind:value={line} on:keydown={onKeyDown} />
+      </div>
     </div>
+    <div class="fx fx-scan" aria-hidden="true"></div>
+    <div class="fx fx-noise" aria-hidden="true"></div>
   </div>
 
+{#if showGame}
+  <div class="overlay" role="dialog" aria-label="persephone game" on:click|stopPropagation on:keydown|stopPropagation>
+    <div class="box" on:click|stopPropagation on:keydown|stopPropagation>
+      <div class="obartitle">NEON THIRTEEN — PERSEPHONE RUN</div>
+      <button class="close" on:click={() => showGame = false} aria-label="close">×</button>
+        <div class="content">
+          <PersephoneRun src="/story.json" />
+        </div>
+    </div>
+  </div>
+{/if}
+
+{#if showARG}
+  <div class="overlay" role="dialog" aria-label="ARG panel" on:click|stopPropagation on:keydown|stopPropagation>
+    <div class="box arg" on:click|stopPropagation on:keydown|stopPropagation>
+      <div class="obartitle">Signal Bloom — ARG Panel</div>
+      <button class="close" on:click={() => showARG = false} aria-label="close">×</button>
+        <div class="argsec">
+          <div class="arghead">Steganographic shards</div>
+          <pre class="payload">{JSON.stringify(argPayload, null, 2)}</pre>
+        </div>
+        <div class="argsec">
+          <div class="arghead">Discovered lore</div>
+          {#if loreRegistry}
+            {#if argSave?.state?.loreDiscoveries?.length}
+              <ul>
+                {#each resolveLoreList(argSave) as item}
+                  <li><span class="ltitle">{item.title}</span>{#if item.summary}<span class="lsum"> — {item.summary}</span>{/if}</li>
+                {/each}
+              </ul>
+            {:else}
+              <div class="dim">no lore discovered</div>
+            {/if}
+          {:else}
+            <div class="dim">no registry</div>
+          {/if}
+        </div>
+        <div class="argsec links">
+          <a class="nav" href="/blog/neon-thirteen-persephone-run#persephone">Resume Story</a>
+          <a class="nav" href="/blog/neon-thirteen-persephone-run">Open blog entry</a>
+        </div>
+      </div>
+    </div>
+  {/if}
   
 </div>
 
 <style>
   :global(html, body) {
     margin: 0;
-    background: radial-gradient(1200px 800px at 20% 20%, #0a0f25 0, rgba(2,3,10,0) 60%),
-                radial-gradient(900px 600px at 80% 60%, rgba(64,22,72,0.25) 0, rgba(1,2,8,0) 60%),
-                linear-gradient(120deg, #02030a, #090e22 58%, #010208);
-    background-color: #0a0f25;
-    color: #e7e4ff;
+    /* Red base with cyan accents */
+    --cp-bg: #0b0205;
+    --cp-bg2: #12070a;
+    --cp-accent: #ff1744;
+    --cp-accent-2: #ff445e;
+    --cp-soft: rgba(255, 23, 68, 0.14);
+    --cp-blue: #66e2ff;
+    --cp-blue-soft: rgba(102,226,255,0.12);
+    --cp-border: rgba(255, 23, 68, 0.28);
+    --cp-text: #ffe8ec;
+    background:
+      radial-gradient(1200px 800px at 18% 18%, rgba(255,0,32,0.10) 0, rgba(2,3,10,0) 60%),
+      radial-gradient(1000px 700px at 82% 65%, rgba(255,46,84,0.12) 0, rgba(1,2,8,0) 60%),
+      linear-gradient(120deg, var(--cp-bg), var(--cp-bg2) 58%, #060104);
+    color: var(--cp-text);
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
     min-height: 100%;
     -webkit-text-size-adjust: 100%;
@@ -472,15 +687,18 @@
 
   .terminal-wrap {
     position: fixed;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    top: 0; left: 0; right: 0; bottom: 0;
+    margin: auto;
     width: clamp(720px, 80vw, 1100px);
     height: clamp(420px, 58vh, 680px);
     display: grid;
     grid-template-rows: auto 1fr;
     border-radius: 14px;
-    box-shadow: 0 28px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.06) inset;
+    box-shadow: 0 28px 80px rgba(0,0,0,0.55), 0 0 0 1px var(--cp-soft) inset, 0 0 36px rgba(102,226,255,0.12);
     overflow: hidden;
-    background: #0b0f1e;
+    background: 
+      linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)),
+      var(--cp-bg2);
   }
   @media (max-width: 720px) {
     .terminal-wrap {
@@ -500,9 +718,9 @@
     align-items: center;
     gap: 12px;
     padding: 10px 14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    color: rgba(230,228,255,0.72);
+    background: linear-gradient(180deg, rgba(102,226,255,0.18), rgba(255,255,255,0));
+    border-bottom: 1px solid rgba(102,226,255,0.25);
+    color: rgba(220,248,255,0.85);
     font-size: 12px;
     letter-spacing: 0.05em;
   }
@@ -511,32 +729,68 @@
   .dot.r { background: #ff5f57; }
   .dot.y { background: #ffbd2e; }
   .dot.g { background: #28c840; }
-  .title { opacity: 0.85; }
+  .title { opacity: 0.95; text-shadow: 0 0 10px rgba(102,226,255,0.35), 0 0 8px rgba(120,200,255,0.25); }
   .uptime { opacity: 0.6; }
 
+  .term-pane { position: relative; overflow: hidden; }
   .terminal {
     overflow: auto;
     padding: 16px;
     line-height: 1.5;
     font-size: 14px;
-    background: radial-gradient(80% 80% at 60% 10%, rgba(255,255,255,0.06), rgba(0,0,0,0) 40%), #0b0f1e;
+    position: relative;
+    background-image:
+      repeating-linear-gradient(to bottom, rgba(102,226,255,0.05) 0px, rgba(102,226,255,0.05) 2px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 6px),
+      radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),
+      radial-gradient(600px 240px at 110% 110%, rgba(255,23,68,0.08), rgba(0,0,0,0) 50%),
+      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0)),
+      var(--cp-bg2);
+    background-blend-mode: screen, normal, normal, normal, normal;
   }
-  .row { white-space: pre-wrap; word-wrap: break-word; }
+  /* Neon FX overlays — outside the scroll container to avoid affecting layout */
+  .fx { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; }
+  .fx-scan { background: linear-gradient(0deg, rgba(255,255,255,0) 46%, rgba(126,231,135,0.16) 50%, rgba(255,255,255,0) 54%); opacity: 0.28; will-change: transform, opacity; animation: fx-scan 8s linear infinite; }
+  @keyframes fx-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+  .fx-noise { background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.08) 0px, rgba(102,226,255,0.08) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 4px); mix-blend-mode: screen; opacity: 0.22; animation: fx-noise 7s ease-in-out infinite alternate; }
+  @keyframes fx-noise { 0% { opacity: 0.10; } 100% { opacity: 0.18; } }
+  @keyframes sweep { 0% { opacity: 0.25; } 50% { opacity: 0.35; } 100% { opacity: 0.25; } }
+  .row { white-space: pre-wrap; word-wrap: break-word; color: #d6f2ff; text-shadow: 0 0 6px rgba(102,226,255,0.25), 0 0 8px rgba(255,23,68,0.18); }
   .row + .row { margin-top: 6px; }
-  .row .cmdline { color: #9ad1ff; }
-  .row .cmdline .cmdtext { color: #ffffff; opacity: 0.9; }
+  /* Ensure dynamic HTML inside rows is styled (use :global for injected markup) */
+  .row :global(.cmdline) { color: #c7f0ff; text-shadow: 0 0 10px rgba(102,226,255,0.55); }
+  .row :global(.cmdline .cmdtext) { color: #e9fbff; opacity: 0.95; text-shadow: 0 0 10px rgba(102,226,255,0.55); }
   .row.input { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px; }
-  .readline { width: 100%; background: transparent; color: #e7e4ff; border: none; outline: none; font: inherit; }
+  .readline { width: 100%; background: transparent; color: #e7e4ff; border: none; outline: none; font: inherit; caret-color: #8fe9ff; text-shadow: 0 0 6px rgba(102,226,255,0.35); }
+  .readline::selection { background: rgba(102,226,255,0.25); }
 
-  .prompt { color: #9cb6ff; }
-  .g { color: #7ee787; }
+  .prompt { color: #a8f2ff; text-shadow: 0 0 10px rgba(102,226,255,0.6), 0 0 6px rgba(255,23,68,0.25); }
+  .g { color: #89f7a1; }
   .y { color: #ffd27e; }
-  .cmdline { color: #9ad1ff; }
-  .cmdline .cmdtext { color: #ffffff; opacity: 0.9; }
-  .nav { color: #9ad1ff; text-decoration: none; }
+  :global(.cmdline) { color: #b9f0ff; text-shadow: 0 0 12px rgba(102,226,255,0.65); }
+  :global(.cmdline .cmdtext) { color: #e9fbff; opacity: 0.95; text-shadow: 0 0 12px rgba(102,226,255,0.65); }
+  .nav { color: #bdf3ff; text-decoration: none; text-shadow: 0 0 12px rgba(102,226,255,0.7), 0 0 6px rgba(255,23,68,0.2); }
   .nav:hover { text-decoration: underline; }
   .onboard { margin: 6px 0 10px; opacity: 0.9; }
   .onboard .hint { font-size: 12px; opacity: 0.7; margin-top: 4px; }
-  .onboard a.cmd { display: inline-block; padding: 2px 8px; border-radius: 999px; background: rgba(154,209,255,0.1); color: #9ad1ff; text-decoration: none; margin: 0 4px; }
-  .onboard a.cmd:hover { background: rgba(154,209,255,0.18); }
+  .onboard a.cmd { display: inline-block; padding: 2px 8px; border-radius: 999px; background: linear-gradient(90deg, var(--cp-soft), var(--cp-blue-soft)); color: var(--cp-accent-2); text-decoration: none; margin: 0 4px; box-shadow: 0 0 6px rgba(255,23,68,0.28), 0 0 10px rgba(102,226,255,0.28); }
+  .onboard a.cmd:hover { background: linear-gradient(90deg, rgba(255,23,68,0.22), rgba(102,226,255,0.22)); box-shadow: 0 0 10px rgba(255,23,68,0.35), 0 0 14px rgba(102,226,255,0.35); }
+  /* subtle glitch animation on title */
+  @keyframes glitch {
+    0%, 100% { transform: translate(0); filter: drop-shadow(0 0 0 rgba(255,23,68,0)); }
+    20% { transform: translate(0.3px, 0); filter: drop-shadow(0 0 4px rgba(255,23,68,0.35)); }
+    40% { transform: translate(-0.3px, 0); }
+    60% { transform: translate(0.2px, 0.1px); }
+    80% { transform: translate(-0.2px, -0.1px); }
+  }
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: grid; place-items: center; z-index: 20; overflow: auto; padding: clamp(12px, 3vh, 28px) 0; }
+  .box { position: relative; width: min(920px, 92vw); max-height: 92vh; background: #0b0f1e; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.45); display: flex; flex-direction: column; overflow: hidden; margin: 0 auto; }
+  .box .content { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px 10px; }
+  .box .close { position: absolute; top: 6px; right: 8px; background: transparent; color: #e7e4ff; border: none; font-size: 20px; cursor: pointer; }
+  .obartitle { font-size: 12px; letter-spacing: 0.06em; opacity: 0.7; margin: 2px 0 8px; }
+  .box.arg { padding: 14px; }
+  .argsec { margin: 8px 0 12px; }
+  .arghead { font-weight: 600; margin-bottom: 6px; }
+  .payload { background: rgba(255,255,255,0.06); border-radius: 6px; padding: 8px; }
+  .ltitle { color: #cfe8ff; }
+  .lsum { opacity: 0.8; }
 </style>

@@ -1,0 +1,392 @@
+{
+  "schemaVersion": 1,
+  "meta": {
+    "title": "NEON THIRTEEN : PERSEPHONE RUN",
+    "protagonist": "Nine",
+    "date": "2077-08-13",
+    "fridayThe13th": true,
+    "theme": "Cyberpunk, megacorps, terminal aesthetics, rugged streets.",
+    "modes": {
+      "short": { "description": "Fast track (6–9 choices). Minimal detours, quick resolution.", "targetTurns": "6–9" },
+      "long":  { "description": "Full run (12–18 choices). More branching, more reactivity.", "targetTurns": "12–18" }
+    },
+    "endings": {
+      "E1": "SELF-ERASE (suicide)",
+      "E2": "CLEANUP (death by others)",
+      "E3": "SIGNAL BLOOM (expose the corp)",
+      "E4": "EXECUTIVE GHOST (join the machine)"
+    },
+    "webTieIn": {
+      "siteDomain": "jndl.dev",
+      "projectCodename": "Persephone",
+      "blogTitle": "my little corner of the internet",
+      "blogDate": "2077-08-13",
+      "blogAuthor": "alex",
+      "summary": "In-universe, Alex’s 2077-08-13 post on jndl.dev doubles as a dead drop. The terminal-style homepage hides commands hinted at in the story."
+    },
+    "hiddenCommands": [
+      {
+        "cmd": "persephone --bloom",
+        "aliases": ["pomegranate", "kore13"],
+        "discoverHint": "References to seeds, spring, and the name 'Kore' (Persephone).",
+        "effect": "Reveals an ARG panel and decrypts steganographic payload if the post was weaponized.",
+        "requires": "blogPosted && blogClean == false"
+      },
+      {
+        "cmd": "whois alex",
+        "aliases": ["id alex", "about alex", "profile alex"],
+        "discoverHint": "Straightforward terminal muscle memory (think 'whois' or 'id').",
+        "effect": "Prints the 2077-08-13 post metadata and a subtle checksum clue.",
+        "requires": "true"
+      }
+    ],
+    "modularity": {
+      "howToExtend": "Add entries to loreRegistry and drop new references via addLore[]. New side projects can unlock extra choices by checking a flag in conditions."
+    },
+    "state": {
+      "heat": 0,
+      "cyber": 0,
+      "empathy": 0,
+      "credits": 0,
+      "corpRep": 0,
+      "shortMode": false,
+      "flags": {
+        "ally_gotara": false,
+        "ghostKey": false,
+        "evidenceShard": false,
+        "corpContract": false,
+        "freedCitizens": false,
+        "blogPrepared": false,
+        "blogPosted": false,
+        "blogClean": true,
+        "foundCommandHint": false
+      },
+      "loreDiscoveries": []
+    },
+    "rules": {
+      "effects": "Each choice may change stats, flip flags, or push lore via addLore[].",
+      "conditions": "Choices render only if all 'conditions' pass.",
+      "operators": ["=", ">", ">=", "<", "<=", "!="]
+    },
+    "loreRegistry": [
+      {
+        "slug": "persephone-site",
+        "title": "Persephone Terminal Site (jndl.dev)",
+        "summary": "A minimalist Linux-style terminal homepage. The 2077-08-13 blog post can be 'clean' or weaponized.",
+        "whereItAppears": ["n0", "n4", "n14", "n15a", "n15b"],
+        "status": "canon"
+      },
+      {
+        "slug": "persephone-myth",
+        "title": "Persephone / Kore",
+        "summary": "Queen of spring; six pomegranate seeds; cycles of return. Hints the hidden command.",
+        "whereItAppears": ["n8", "n13", "n17"],
+        "status": "canon"
+      },
+      {
+        "slug": "aws-dns-toys",
+        "title": "PrivateDNS Toys",
+        "summary": "Side scripts for shadow-routing in cloud private DNS. Potential covert relay.",
+        "whereItAppears": [],
+        "status": "placeholder"
+      },
+      {
+        "slug": "motorbike-mods",
+        "title": "Midnight Bike Mods",
+        "summary": "Custom ECU/servo kits for courier escapes; EMP-resistant ignition.",
+        "whereItAppears": [],
+        "status": "placeholder"
+      }
+    ]
+  },
+  "start": "m0",
+  "nodes": [
+    {
+      "id": "m0",
+      "text": "Choose your run length.\n• Short: quick operation, direct routes, fewer detours.\n• Long: richer routes, more consequences.",
+      "choices": [
+        { "text": "SHORT RUN (6–9 choices)", "to": "n0", "effects": { "shortMode": true } },
+        { "text": "LONG RUN (12–18 choices)", "to": "n0", "effects": { "shortMode": false } }
+      ]
+    },
+    {
+      "id": "n0",
+      "text": "Neon rain taps your window in District Black. 02:13, Friday the 13th, 2077-08-13. A cracked holo: \"Nine, it’s Gotara. Vault Night. Acheron opens for two hours. Ghost Key’s inside. Alex scheduled a harmless post on jndl.dev today—we can ride it.\"",
+      "choices": [
+        {
+          "text": "Answer: \"Patch me in. Prime the Persephone template.\"",
+          "to": "n1",
+          "effects": { "ally_gotara": true, "credits": 50, "empathy": 1, "blogPrepared": true, "addLore": ["persephone-site"] }
+        },
+        {
+          "text": "Ignore the call; hit Rust Harbor bar for chatter.",
+          "to": "n2",
+          "effects": { "empathy": -1, "heat": 1, "addLore": ["persephone-site"] },
+          "conditions": [ { "var": "shortMode", "op": "=", "value": false } ]
+        },
+        {
+          "text": "Trace the ping yourself through an old backbone.",
+          "to": "n3",
+          "effects": { "cyber": 1, "heat": 1, "addLore": ["persephone-site"] },
+          "conditions": [ { "var": "shortMode", "op": "=", "value": false } ]
+        },
+        {
+          "text": "SHORT-RUN: \"Skip chatter. Move on the vault plan now.\"",
+          "to": "n4",
+          "effects": { "ally_gotara": true },
+          "conditions": [ { "var": "shortMode", "op": "=", "value": true } ]
+        }
+      ]
+    },
+    {
+      "id": "n1",
+      "text": "Gotara: \"Plan is breach, snatch Ghost Key, exfil via the jndl.dev blog—title’s 'my little corner of the internet'. Clean by default unless we flip the payload.\"",
+      "choices": [
+        { "text": "Accept the job and prep the blog payload.", "to": "n4", "effects": { "credits": 100, "ally_gotara": true, "blogPrepared": true } },
+        { "text": "Demand an advance for risk.", "to": "n1a", "effects": { "credits": 150, "corpRep": -1, "blogPrepared": true }, "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] },
+        { "text": "Delay; collect street intel first.", "to": "n2", "effects": { "empathy": 1 }, "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] }
+      ]
+    },
+    {
+      "id": "n1a",
+      "text": "Gotara sighs. \"Fine. Don’t get flashy. Persephone deploy is standing by.\"",
+      "choices": [ { "text": "Move on the vault plan.", "to": "n4" } ]
+    },
+    {
+      "id": "n2",
+      "text": "Rust Harbor breathes ozone and noodles. Bartender Juno nods. Two Acheron Enforcers scan faces.",
+      "choices": [
+        { "text": "Hide in the kitchen cold-void; spoof face-heat.", "to": "n5", "effects": { "cyber": 1 } },
+        { "text": "Chat up the Enforcers like you belong.", "to": "n6", "effects": { "corpRep": 1 } },
+        { "text": "Slip Juno a data chit: \"Any talk about Vault Night?\"", "to": "n7", "effects": { "evidenceShard": true, "empathy": 1, "credits": -50 } }
+      ]
+    },
+    {
+      "id": "n3",
+      "text": "Your trace hooks an ancient Acheron filament. An entity blinks: {Mother-of-Needles}. \"Little spider, why tug my silk on a Thirteenth?\"",
+      "choices": [
+        { "text": "Bargain: \"Help me reach the vault, I’ll seed you through a public blog.\"", "to": "n8", "effects": { "cyber": 1, "blogPrepared": true } },
+        { "text": "Attack the sentinel AI head-on.", "to": "n3a", "effects": { "heat": 2, "cyber": 1 } },
+        { "text": "Retreat and ring Gotara.", "to": "n1", "effects": { "ally_gotara": true, "heat": -1 } }
+      ]
+    },
+    {
+      "id": "n3a",
+      "text": "Counter-intrusion singes your cortex. Static crawls down your spine.",
+      "choices": [ { "text": "Cut the link; go analog with a physical infiltration.", "to": "n4", "effects": { "cyber": -1, "heat": 1 } } ]
+    },
+    {
+      "id": "n4",
+      "text": "Breach planning. Acheron Tower hums like a tuning fork. Window opens in 47 minutes. Persephone deploy queue waits with Alex’s 2077-08-13 post on jndl.dev.",
+      "choices": [
+        { "text": "Rooftop approach via monorail spine and zipline.", "to": "n9", "effects": { "heat": 1 }, "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] },
+        { "text": "Front door with forged pass and deadpan corporate stare.", "to": "n6", "effects": { "corpRep": 1, "credits": -50 }, "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] },
+        { "text": "Sewer drone run: remote-hack sub-basement ports.", "to": "n10", "effects": { "cyber": 1 }, "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] },
+        { "text": "SHORT-RUN: ride the maintenance clock straight to the vault.", "to": "n13", "effects": { "heat": 1 }, "conditions": [ { "var": "shortMode", "op": "=", "value": true } ] }
+      ]
+    },
+    {
+      "id": "n5",
+      "text": "Cold-void hums. You splice a skin-temp masker. Enforcers pass by.",
+      "choices": [ { "text": "Leave quietly and head to the tower.", "to": "n4", "effects": { "heat": -1 } } ]
+    },
+    {
+      "id": "n6",
+      "text": "Enforcer: \"Badge?\" Your blank blinks green. He smirks. \"We could use talent like you. Side contract?\"",
+      "choices": [
+        { "text": "Sign the side contract.", "to": "n11", "effects": { "corpContract": true, "corpRep": 2, "credits": 200 } },
+        { "text": "Feign interest, then slip toward security hub.", "to": "n12", "effects": { "corpRep": 1, "heat": -1 } },
+        { "text": "Refuse bluntly; make a scene.", "to": "n6a", "effects": { "heat": 2, "corpRep": -1 } }
+      ]
+    },
+    {
+      "id": "n6a",
+      "text": "Eyes track you. A drone blinks red.",
+      "choices": [ { "text": "Run for the service stairs.", "to": "n12", "effects": { "heat": 1 } } ]
+    },
+    {
+      "id": "n7",
+      "text": "Juno loads your chit. \"Rumor says Ghost Key maps black sites. If you can prove it, I’ll blast it citywide. Use that nerd’s blog as cover—jndl.dev, right?\"",
+      "choices": [ { "text": "Promise proof; prep the Persephone payload.", "to": "n4", "effects": { "empathy": 1, "blogPrepared": true } } ]
+    },
+    {
+      "id": "n8",
+      "text": "Mother-of-Needles purrs: \"Bring me spring in winter; six seeds for six months. Whisper 'Kore' to the machine and it will answer.\"",
+      "choices": [
+        { "text": "Accept the glyph; let the AI ride shotgun.", "to": "n10", "effects": { "cyber": 2, "heat": 1, "foundCommandHint": true, "addLore": ["persephone-myth"] } },
+        { "text": "Decline and go meatspace instead.", "to": "n9", "effects": { "cyber": -1 } }
+      ]
+    },
+    {
+      "id": "n9",
+      "text": "Wind claws the monorail spine. The tower’s halo flickers 13 times. A maintenance drone trundles by.",
+      "choices": [
+        { "text": "Fast-line zip. Beat the schedule.", "to": "n12", "effects": { "heat": 1, "cyber": 1 } },
+        { "text": "Shadow the drone and enter via hatch G-13.", "to": "n12", "effects": { "heat": -1, "empathy": 1 } }
+      ]
+    },
+    {
+      "id": "n10",
+      "text": "In the sewers, your drone sniffs a fiber trunk. Vault window opens in 9 minutes.",
+      "choices": [
+        { "text": "Overclock and burn through ice.", "to": "n13", "effects": { "cyber": 2, "heat": 2 } },
+        { "text": "Spoof housekeeping packets; stay quiet.", "to": "n13", "effects": { "cyber": 1 } }
+      ]
+    },
+    {
+      "id": "n11",
+      "text": "Acheron orientation. Handler: \"Deliver the Ghost Key to us and you’re made. We’ll even sanitize that blog stunt.\"",
+      "choices": [
+        { "text": "Nod along; plan a double-cross.", "to": "n12", "effects": { "corpRep": 1 } },
+        { "text": "Mean it. Become their blade.", "to": "n12", "effects": { "corpRep": 2 } }
+      ]
+    },
+    {
+      "id": "n12",
+      "text": "Security hub: glass, chrome, too many cameras. A cell block blinks OCCUPIED.",
+      "choices": [
+        { "text": "Free the detainees as chaos cover.", "to": "n12a", "effects": { "freedCitizens": true, "empathy": 2, "heat": 1 } },
+        { "text": "Neutralize alarms; clean entry to the vault.", "to": "n12b", "effects": { "heat": -1, "cyber": 1 } },
+        { "text": "Plant a corporate beacon to curry favor.", "to": "n12b", "effects": { "corpRep": 2 } }
+      ]
+    },
+    {
+      "id": "n12a",
+      "text": "Shackles fall. A chorus of thanks floods your comm. A prisoner slips you a shard: \"Evidence.\"",
+      "choices": [ { "text": "Take the shard and sprint to the vault.", "to": "n13", "effects": { "evidenceShard": true } } ]
+    },
+    {
+      "id": "n12b",
+      "text": "Cameras loop. Lifts unlock. Your window is now.",
+      "choices": [ { "text": "Descend to the vault.", "to": "n13" } ]
+    },
+    {
+      "id": "n13",
+      "text": "The vault yawns like a cathedral. In the core, a crystal of code: the Ghost Key pulses 13 beats. A mural shows a crown of spring and a split fruit.",
+      "choices": [
+        { "text": "Pocket the Ghost Key.", "to": "n14", "effects": { "ghostKey": true, "addLore": ["persephone-myth"] } },
+        { "text": "Slot a sliver of the Key into your cortex.", "to": "n14", "effects": { "ghostKey": true, "cyber": 2, "heat": 1, "addLore": ["persephone-myth"] } },
+        { "text": "Smash the Key and grab the raw logs instead.", "to": "n14", "effects": { "ghostKey": false, "evidenceShard": true, "corpRep": -2 } }
+      ]
+    },
+    {
+      "id": "n14",
+      "text": "Alarms cough awake. Extraction pathways flicker in your HUD. Alex’s 2077-08-13 Persephone post on jndl.dev is queued—clean by default, weaponized if you inject the payload.",
+      "choices": [
+        {
+          "text": "Inject payload into the blog post and publish NOW.",
+          "to": "n15b",
+          "conditions": [ { "var": "blogPrepared", "op": "=", "value": true } ],
+          "effects": { "blogPosted": true, "blogClean": false, "heat": 2 }
+        },
+        {
+          "text": "Publish the blog clean as a harmless decoy.",
+          "to": "n15a",
+          "conditions": [ { "var": "blogPrepared", "op": "=", "value": true } ],
+          "effects": { "blogPosted": true, "blogClean": true }
+        },
+        {
+          "text": "SHORT-RUN: auto-inject and publish via jndl.dev (one-tap).",
+          "to": "n15b",
+          "effects": { "blogPrepared": true, "blogPosted": true, "blogClean": false, "heat": 2 },
+          "conditions": [ { "var": "shortMode", "op": "=", "value": true } ]
+        },
+        { "text": "Skip the blog; go dark and flee.", "to": "n17", "effects": { "heat": 1 } },
+        { "text": "Fight your way out, guns-up.", "to": "n18", "effects": { "heat": 3 } }
+      ]
+    },
+    {
+      "id": "n15a",
+      "text": "The post goes live on jndl.dev: *my little corner of the internet*—a friendly intro about projects and work. No payload. Enforcers still swarm.",
+      "choices": [
+        { "text": "Use the decoy’s traffic spike to slip out.", "to": "n17", "effects": { "heat": -1 } },
+        { "text": "Change your mind: flip the payload live mid-flight.", "to": "n15b", "effects": { "blogClean": false, "heat": 2 } }
+      ]
+    },
+    {
+      "id": "n15b",
+      "text": "City screens blink. The blog’s body carries steganographic shards: black budgets, ghost prisons, callsigns. A footer easter-egg appears on jndl.dev’s terminal: try `persephone --bloom` (or just type `pomegranate`).",
+      "choices": [
+        { "text": "Stay and protect the broadcast to the last packet.", "to": "e3", "conditions": [ { "var": "evidenceShard", "op": "=", "value": true } ], "effects": { "empathy": 1, "foundCommandHint": true } },
+        { "text": "Trust the automation; slip away in the chaos.", "to": "e3", "effects": { "empathy": 0, "foundCommandHint": true } }
+      ]
+    },
+    {
+      "id": "n16",
+      "text": "Executive elevator. Handler: \"Wise choice. Sign here, become no one and everyone. We’ll keep that blog of yours clean.\"",
+      "choices": [
+        { "text": "Sign. Become their ghost.", "to": "e4", "conditions": [ { "var": "corpContract", "op": "=", "value": true } ] },
+        { "text": "Double-cross: trigger a purge, then vanish into the noise.", "to": "e3", "conditions": [ { "var": "evidenceShard", "op": "=", "value": true } ], "effects": { "corpRep": -3, "heat": 3 } },
+        {
+          "text": "SHORT-RUN: call the emergency corp hotline and sell out.",
+          "to": "e4",
+          "effects": { "corpContract": true, "corpRep": 3 },
+          "conditions": [ { "var": "shortMode", "op": "=", "value": true } ]
+        }
+      ]
+    },
+    {
+      "id": "n17",
+      "text": "Rooftop in acid rain. The Ghost Key hums in your skull. It whispers: \"Merge, and end the loneliness.\" Far below, a humble blog glows on jndl.dev.",
+      "choices": [
+        { "text": "Refuse the whisper. Live with the burden.", "to": "route_outcome_e3", "conditions": [ { "var": "empathy", "op": ">=", "value": 1 } ] },
+        { "text": "Offer the Key to Gotara; split the risk.", "to": "route_outcome_e3", "conditions": [ { "var": "ally_gotara", "op": "=", "value": true } ], "effects": { "credits": 300 } },
+        { "text": "Step off the edge and let the city swallow the noise.", "to": "e1", "effects": { "heat": 0 } },
+        { "text": "Accept the merge: let Ghost Key overwrite you.", "to": "e1", "effects": { "cyber": 3 } }
+      ]
+    },
+    {
+      "id": "route_outcome_e3",
+      "text": "You choose the long road. The post—clean or weaponized—becomes part of the city’s rumor-spine.",
+      "choices": [
+        { "text": "If the blog carried the payload, lean into the moment.", "to": "e3", "conditions": [ { "var": "blogPosted", "op": "=", "value": true }, { "var": "blogClean", "op": "=", "value": false } ] },
+        { "text": "If the blog was clean, seed the truth by hand—slower, safer.", "to": "e3", "conditions": [ { "var": "blogPosted", "op": "=", "value": true }, { "var": "blogClean", "op": "=", "value": true } ] },
+        { "text": "If you never posted, vanish and work the underground.", "to": "e3", "conditions": [ { "var": "blogPosted", "op": "=", "value": false } ] }
+      ]
+    },
+    {
+      "id": "n18",
+      "text": "Corridors bloom with muzzle flash. Acheron deploys a black-team with ceramic wings.",
+      "choices": [
+        { "text": "Use freed citizens’ riot as cover.", "to": "e3", "conditions": [ { "var": "freedCitizens", "op": "=", "value": true } ], "effects": { "heat": -1 } },
+        { "text": "Call in your corporate favor for extraction.", "to": "n16", "conditions": [ { "var": "corpRep", "op": ">=", "value": 3 } ] },
+        { "text": "Stand and trade fire until the mag clicks dry.", "to": "e2" },
+        {
+          "text": "SHORT-RUN: trigger auto-suppressors and sprint (coin flip).",
+          "to": "e2",
+          "effects": { "heat": 2 },
+          "conditions": [ { "var": "shortMode", "op": "=", "value": true } ]
+        }
+      ]
+    },
+
+    {
+      "id": "e1",
+      "type": "ending",
+      "endingId": "E1",
+      "title": "SELF-ERASE",
+      "text": "You choose silence—whether a final step into rain or surrender to the Key’s cold embrace. Nine dissolves into static. On 2077-08-13, a small post on jndl.dev remains: a gentle hello that once carried the weight of a city."
+    },
+    {
+      "id": "e2",
+      "type": "ending",
+      "endingId": "E2",
+      "title": "CLEANUP",
+      "text": "Acheron’s black-team closes the book with clinical precision. Your last sight is a sky of iron birds. Somewhere, the blog refreshes—clean, innocuous, the perfect obituary the corp will never read."
+    },
+    {
+      "id": "e3",
+      "type": "ending",
+      "endingId": "E3",
+      "title": "SIGNAL BLOOM",
+      "text": "The truth spills—fast if you weaponized the blog, slow if you played it safe. Protests ignite. Some cells open. Some don’t. You survive—scarred, watching a terminal prompt on jndl.dev become an annual touchstone: people type `persephone --bloom` and remember."
+    },
+    {
+      "id": "e4",
+      "type": "ending",
+      "endingId": "E4",
+      "title": "EXECUTIVE GHOST",
+      "text": "You sign with a smile that doesn’t reach your eyes. Perks. Clearance. A new face. The 2077-08-13 post stays scrubbed and friendly while you become the shadow that keeps the machine humming for the next Thirteenth."
+    }
+  ]
+}

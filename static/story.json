@@ -1,0 +1,536 @@
+{
+  "schemaVersion": 1,
+  "meta": {
+    "title": "NEON THIRTEEN : PERSEPHONE RUN — v9 (gated prep, clean exits)",
+    "protagonist": "Nine",
+    "date": "2077-08-13",
+    "fridayThe13th": true,
+    "theme": "Near-future civic noir told plainly.",
+    "modes": {
+      "short": { "description": "Fast track (10–12 choices).", "targetTurns": "10–12" },
+      "long": { "description": "Expanded run (30–46 choices). Clear gating + prep payoffs.", "targetTurns": "30–46" }
+    },
+    "ux": {
+      "showStats": false,
+      "showLockedChoices": true
+    },
+    "flow": {
+      "hubNodeId": "hub",
+      "lockAtNodeIds": ["n12", "n13"]
+    },
+    "endings": {
+      "E1": "SELF-ERASE (suicide)",
+      "E2": "CLEANUP (death by others)",
+      "E3": "SIGNAL BLOOM (public exposure)",
+      "E4": "EXECUTIVE GHOST (join the machine)"
+    },
+    "webTieIn": {
+      "siteDomain": "jndl.dev",
+      "projectCodename": "Persephone",
+      "blogTitle": "my little corner of the internet",
+      "blogDate": "2077-08-13",
+      "blogAuthor": "alex",
+      "summary": "Small easter egg only. Has no bearing on main endings."
+    },
+    "hiddenCommands": [
+      {
+        "cmd": "persephone --bloom",
+        "aliases": ["pomegranate", "kore13"],
+        "discoverHint": "Hints about seeds/spring/Kore appear only if you lace the decoy.",
+        "effect": "Opens an ARG panel if the decoy blog was laced.",
+        "requires": "blogPosted && blogClean == false"
+      },
+      {
+        "cmd": "whois alex",
+        "aliases": ["id alex", "about alex", "profile alex"],
+        "discoverHint": "“names resolve to records” shows up in a few places.",
+        "effect": "Prints the 2077-08-13 post metadata + checksum clue.",
+        "requires": "true"
+      },
+      {
+        "cmd": "whois johnny",
+        "aliases": ["id johnny", "about johnny"],
+        "discoverHint": "A torn caption and a hand wrapped in silver tape.",
+        "effect": "Prints 'record incomplete' unless the 'johnny-silverhand' lore is found.",
+        "requires": "true"
+      }
+    ],
+    "modularity": {
+      "howToExtend": "Add flags and lore slugs; gate choices with conditions; when conditions fail, set showIfLocked:true with a friendly lockedText."
+    },
+    "state": {
+      "heat": 0,
+      "cyber": 0,
+      "empathy": 0,
+      "credits": 0,
+      "corpRep": 0,
+      "shortMode": false,
+      "flags": {
+        "ally_johnny": false,
+        "met_mila": false,
+        "met_juno": false,
+        "promised_juno": false,
+        "met_mother": false,
+        "ai_ride": false,
+        "ghostKey": false,
+        "evidenceShard": false,
+        "corpContract": false,
+        "freedCitizens": false,
+        "blogPrepared": false,
+        "blogPosted": false,
+        "blogClean": true,
+        "foundCommandHint": false,
+        "kit_stealth": false,
+        "kit_loud": false,
+        "kit_fieldmed": false,
+        "prep_rooftop": false,
+        "prep_pass": false,
+        "prep_mila_gloves": false,
+        "prep_radio_codes": false
+      },
+      "loreDiscoveries": []
+    },
+    "rules": {
+      "effects": "Apply numeric deltas; set flags; push addLore (dedupe).",
+      "conditions": "All must pass (AND).",
+      "operators": ["=", ">", ">=", "<", "<=", "!="]
+    },
+    "world": {
+      "setting": "Novapolis, a port city that outsourced services after floods.",
+      "factions": {
+        "Acheron Industries": "Contractor that runs traffic, budgets, detention.",
+        "Street Radio (Juno)": "Community station that reads names on-air.",
+        "City IT Remnants (Johnny)": "Ex-infosec who refused ghost-dockets."
+      },
+      "terms": {
+        "Ghost Key": "Root key for Acheron’s ledgers.",
+        "Vault Night": "Friday the 13th key rotation, two-hour window.",
+        "Mother-of-Needles": "Old scheduler now guarding the net."
+      }
+    },
+    "loreRegistry": [
+      { "slug": "acheron", "title": "Acheron Industries", "summary": "Vendor turned city-keeper.", "whereItAppears": ["n1q1","n12","n18"], "status": "canon" },
+      { "slug": "ghost-key", "title": "Ghost Key", "summary": "Seed that proves payments and cells.", "whereItAppears": ["n1q2","n13"], "status": "canon" },
+      { "slug": "vault-night", "title": "Vault Night", "summary": "Audit window dressed as ritual.", "whereItAppears": ["n1q3","n4"], "status": "canon" },
+      { "slug": "mother-needles", "title": "Mother-of-Needles", "summary": "Retired scheduler guarding walls; can blur cameras if invited along.", "whereItAppears": ["n3","n3a","n12c"], "status": "canon" },
+      { "slug": "juno", "title": "Juno", "summary": "Bartender; runs Street Radio; careful with names.", "whereItAppears": ["n2","n7","n20"], "status": "person" },
+      { "slug": "mila", "title": "Mila", "summary": "Neighbor; repairs scooters; keeps tea warm.", "whereItAppears": ["n0a","n0a_resp","n26"], "status": "person" },
+      { "slug": "johnny", "title": "Johnny", "summary": "Fixer; ex-infosec; hates ghost-dockets.", "whereItAppears": ["n1","n1q1"], "status": "person" },
+      { "slug": "district-black", "title": "District Black", "summary": "Cheap rent, salt air, loud drones.", "whereItAppears": ["n0"], "status": "place" },
+      { "slug": "rust-harbor", "title": "Rust Harbor", "summary": "Steam, soup, and a pirate tower over the water.", "whereItAppears": ["n2","n20"], "status": "place" },
+      { "slug": "mesh", "title": "Civic Mesh", "summary": "Clinics & libraries that can anchor proofs.", "whereItAppears": ["n19"], "status": "canon" },
+      { "slug": "persephone-myth", "title": "Persephone / Kore", "summary": "Return cycles; six seeds (small hint).", "whereItAppears": ["n8","n13"], "status": "canon" },
+      { "slug": "persephone-site", "title": "Persephone Terminal (jndl.dev)", "summary": "Optional decoy; hidden command lives here.", "whereItAppears": ["n15"], "status": "canon" },
+      { "slug": "johnny-silverhand", "title": "JOHNNY S—", "summary": "Old photo: silver tape wrapped on the right hand.", "whereItAppears": ["n28"], "status": "easter-egg" }
+    ]
+  },
+  "start": "m0",
+  "nodes": [
+    {
+      "id": "m0",
+      "text": "Pick how much time you have.\n• Short: direct route, fewer scenes.\n• Long: more people, more choices, clear requirements.",
+      "choices": [
+        { "text": "SHORT RUN (10–12 choices)", "to": "n0", "effects": { "shortMode": true } },
+        { "text": "LONG RUN (30–46 choices)", "to": "n0", "effects": { "shortMode": false } }
+      ]
+    },
+    {
+      "id": "hub",
+      "text": "City Hub — pre-heist. Visit people, prep, then plan the breach.",
+      "choices": [
+        { "text": "Fixer (Johnny) — ✓ visited", "to": "n1", "conditions": [ { "var": "ally_johnny", "op": "=", "value": true } ] },
+        { "text": "Fixer (Johnny)", "to": "n1", "conditions": [ { "var": "ally_johnny", "op": "=", "value": false } ] },
+        { "text": "Neighbor (Mila) — ✓ visited", "to": "n0a", "conditions": [ { "var": "met_mila", "op": "=", "value": true } ] },
+        { "text": "Neighbor (Mila)", "to": "n0a", "conditions": [ { "var": "met_mila", "op": "=", "value": false } ] },
+        { "text": "Rust Harbor (Juno) — ✓ visited", "to": "n2", "conditions": [ { "var": "met_juno", "op": "=", "value": true } ] },
+        { "text": "Rust Harbor (Juno)", "to": "n2", "conditions": [ { "var": "met_juno", "op": "=", "value": false } ] },
+        { "text": "Old Backbone (AI) — ✓ visited", "to": "n3", "conditions": [ { "var": "met_mother", "op": "=", "value": true } ] },
+        { "text": "Old Backbone (AI)", "to": "n3", "conditions": [ { "var": "met_mother", "op": "=", "value": false } ] },
+        { "text": "Pre-Heist Prep Board", "to": "p0" },
+        { "text": "Plan the Breach", "to": "n4" }
+      ]
+    },
+    {
+      "id": "n0",
+      "text": "District Black, 02:13, Friday the 13th, 2077-08-13. The fan rattles. Rain sounds like coins on the sill.\n\n**JOHNNY:** “Nine, it’s Vault Night. Two hours to touch Acheron’s key room. The Ghost Key is live.”",
+      "choices": [
+        { "text": "“I’m in. Give me the quick plan.”", "to": "n1", "effects": { "ally_johnny": true, "addLore": ["johnny","district-black"] } },
+        { "text": "SHORT: “Skip talk. Where’s the entry?”", "to": "n4", "effects": { "ally_johnny": true, "addLore": ["johnny","district-black"] }, "conditions": [ { "var": "shortMode", "op": "=", "value": true } ] },
+        { "text": "Go to City Hub (free-roam).", "to": "hub", "effects": { "ally_johnny": true, "addLore": ["johnny","district-black"] }, "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] }
+      ]
+    },
+    {
+      "id": "n0a",
+      "text": "Mila opens in a blanket. She fixes scooters for rent money.\n\n**MILA:** “You’re going out? On a bad luck night? Be careful. People vanish.”",
+      "choices": [
+        { "text": "Tell her you’ll be back by sunrise.", "to": "n0a_resp", "effects": { "met_mila": true, "addLore": ["mila"] } },
+        { "text": "Ask what she’s heard about Acheron.", "to": "n0aq1", "effects": { "met_mila": true, "addLore": ["mila"] } }
+      ]
+    },
+    {
+      "id": "n0a_resp",
+      "text": "**MILA:** “Then I’ll keep the hallway light on. Knock twice when you’re back. I’ll put on tea.”",
+      "choices": [
+        { "text": "Say goodbye and head out.", "to": "hub" },
+        { "text": "Change your mind and ask about Acheron.", "to": "n0aq1" }
+      ]
+    },
+    {
+      "id": "n0aq1",
+      "text": "**MILA:** “They ran ambulances during the floods. Now they run doors. If a lock has no owner, it’s theirs.”",
+      "choices": [
+        { "text": "Say goodbye and head out.", "to": "hub" }
+      ]
+    },
+    {
+      "id": "n1",
+      "text": "**JOHNNY:** “Simple: pick a way in. Reach the vault. Take the Ghost Key. Then decide: public proof, sell it back, or keep it. Ask first if you like.”",
+      "choices": [
+        { "text": "Who is Acheron, really?", "to": "n1q1" },
+        { "text": "What is the Ghost Key in plain words?", "to": "n1q2" },
+        { "text": "Why Friday the 13th?", "to": "n1q3" },
+        { "text": "That’s enough. Say goodbye.", "to": "n1_end", "effects": { "ally_johnny": true } }
+      ]
+    },
+    { "id": "n1q1", "text": "**JOHNNY:** “Crisis contractor that never gave power back. Budgets and jails pass through their systems.”", "choices": [ { "text": "Back to Johnny.", "to": "n1" } ] },
+    { "id": "n1q2", "text": "**JOHNNY:** “A seed that signs truth or lies in their ledgers: who was paid, who was locked up.”", "choices": [ { "text": "Back to Johnny.", "to": "n1" } ] },
+    { "id": "n1q3", "text": "**JOHNNY:** “They rotate keys when people look away. Two-hour window. Tonight.”", "choices": [ { "text": "Back to Johnny.", "to": "n1" } ] },
+    { "id": "n1_end", "text": "**JOHNNY:** “See you on the other side.”", "choices": [ { "text": "Back to City Hub.", "to": "hub" } ] },
+    {
+      "id": "n2",
+      "text": "Rust Harbor. Steam and cheap soup. A radio reads names of the missing. **JUNO** wipes a glass.\n\n**JUNO:** “Help you?”",
+      "choices": [
+        { "text": "Ask what Street Radio needs to go public.", "to": "n7", "effects": { "met_juno": true, "addLore": ["juno","rust-harbor"] } },
+        { "text": "Watch patrol rhythm first.", "to": "n5", "effects": { "met_juno": true, "addLore": ["juno","rust-harbor"] } },
+        { "text": "Play corporate; see if a side door appears.", "to": "n6", "effects": { "met_juno": true, "addLore": ["juno","rust-harbor"] } }
+      ]
+    },
+    {
+      "id": "n7",
+      "text": "**JUNO:** “Bring names and numbers that don’t crumble when checked. I’ll read them on-air. Twice.”",
+      "choices": [
+        { "text": "Promise you’ll bring a shard she can verify.", "to": "n7_resp", "effects": { "promised_juno": true } },
+        { "text": "Never mind. Say goodbye.", "to": "n7_end", "effects": { "met_juno": true } }
+      ]
+    },
+    { "id": "n7_resp", "text": "**JUNO:** “Good. I’ll keep a line open. If you can’t reach me, the Civic Mesh can take the load.”", "choices": [ { "text": "Say goodbye.", "to": "n7_end" } ] },
+    { "id": "n7_end", "text": "The radio hums as the rain gets louder.", "choices": [ { "text": "Back to City Hub.", "to": "hub" } ] },
+    {
+      "id": "n3",
+      "text": "You follow an old fiber line. A tired voice answers.\n\n**MOTHER-OF-NEEDLES:** “I timed buses once. Now I time locks. Why are you here?”",
+      "choices": [
+        { "text": "Ask how the vault works, simply.", "to": "n3a", "effects": { "met_mother": true, "addLore": ["mother-needles"] } },
+        { "text": "Invite her to ride your signal later.", "to": "n3b", "effects": { "met_mother": true, "addLore": ["mother-needles"] } },
+        { "text": "Say goodbye.", "to": "n3_end", "effects": { "met_mother": true, "addLore": ["mother-needles"] } }
+      ]
+    },
+    { "id": "n3a", "text": "**MOTHER:** “The vault sits where schedules meet. Say ‘Kore’ when the city blinks; a lane opens.”", "choices": [ { "text": "Back.", "to": "n3" } ] },
+    { "id": "n3b", "text": "**MOTHER:** “If I ride, I blur cameras for half a minute when you whisper ‘Kore.’ Spend it well.”", "choices": [ { "text": "Accept the ride.", "to": "n3_end", "effects": { "ai_ride": true, "foundCommandHint": true } }, { "text": "Not this time.", "to": "n3_end" } ] },
+    { "id": "n3_end", "text": "The old system hums in the dark.", "choices": [ { "text": "Back to City Hub.", "to": "hub" } ] },
+    {
+      "id": "p0",
+      "text": "Pre-Heist Prep Board — pick small tasks that help later.",
+      "choices": [
+        { "text": "Scout the Rooftop Line — ✓ done", "to": "hub", "slug": "prep_rooftop", "variant": "done", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": true } ] },
+        { "text": "Scout the Rooftop Line", "to": "p1", "slug": "prep_rooftop", "variant": "available", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Scout later if needed." },
+        { "text": "Forge a Front-Door Pass — ✓ done", "to": "hub", "slug": "prep_pass", "variant": "done", "conditions": [ { "var": "prep_pass", "op": "=", "value": true } ] },
+        { "text": "Forge a Front-Door Pass", "to": "p2", "slug": "prep_pass", "variant": "available", "conditions": [ { "var": "ally_johnny", "op": "=", "value": true }, { "var": "prep_pass", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Johnny first." },
+        { "text": "Borrow Mila’s Insulated Gloves — ✓ done", "to": "hub", "slug": "prep_mila_gloves", "variant": "done", "conditions": [ { "var": "prep_mila_gloves", "op": "=", "value": true } ] },
+        { "text": "Borrow Mila’s Insulated Gloves", "to": "p3", "slug": "prep_mila_gloves", "variant": "available", "conditions": [ { "var": "met_mila", "op": "=", "value": true }, { "var": "prep_mila_gloves", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Mila at her door." },
+        { "text": "Share Street Radio Codes — ✓ done", "to": "hub", "slug": "prep_radio_codes", "variant": "done", "conditions": [ { "var": "prep_radio_codes", "op": "=", "value": true } ] },
+        { "text": "Share Street Radio Codes", "to": "p4", "slug": "prep_radio_codes", "variant": "available", "conditions": [ { "var": "met_juno", "op": "=", "value": true }, { "var": "promised_juno", "op": "=", "value": true }, { "var": "prep_radio_codes", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Juno and promise a shard." },
+        { "text": "Back to City Hub", "to": "hub" }
+      ]
+    },
+    {
+      "id": "p1",
+      "text": "You mark handholds with chalk and map a quiet drop over the monorail spine.",
+      "choices": [
+        { "text": "Head back.", "to": "p0", "effects": { "prep_rooftop": true } }
+      ]
+    },
+    {
+      "id": "p2",
+      "text": "Johnny’s contact burns a low-tier front-desk pass. It won’t survive a deep scan, but it’ll open one door clean.",
+      "choices": [
+        { "text": "Head back.", "to": "p0", "effects": { "prep_pass": true } }
+      ]
+    },
+    {
+      "id": "p3",
+      "text": "Mila hands you thick gloves. “Don’t fry yourself on some stupid hatch.”",
+      "choices": [
+        { "text": "Thank her and head back.", "to": "p0", "effects": { "prep_mila_gloves": true } }
+      ]
+    },
+    {
+      "id": "p4",
+      "text": "Juno saves a narrowband code path. “If you’re trapped inside, call this. But only with proof.”",
+      "choices": [
+        { "text": "Head back.", "to": "p0", "effects": { "prep_radio_codes": true } }
+      ]
+    },
+    {
+      "id": "n4",
+      "text": "Plan the breach. Pick a way in. You can grab a kit first.",
+      "choices": [
+        { "text": "Choose a gear kit.", "to": "n21", "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] },
+        { "text": "Rooftop: ride the monorail spine; drop to maintenance.", "to": "n9" },
+        { "text": "Front: forged pass; small talk; security.", "to": "n6", "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] },
+        { "text": "Underground: sewer drones, fiber trunks.", "to": "n10" },
+        { "text": "SHORT: skip to security hub.", "to": "n12", "conditions": [ { "var": "shortMode", "op": "=", "value": true } ] },
+        { "text": "Back to City Hub.", "to": "hub", "conditions": [ { "var": "shortMode", "op": "=", "value": false } ] }
+      ]
+    },
+    {
+      "id": "n21",
+      "text": "Gear table. One kit only.",
+      "choices": [
+        { "text": "Stealth kit.", "to": "n4", "effects": { "kit_stealth": true, "kit_loud": false, "kit_fieldmed": false } },
+        { "text": "Loud kit.", "to": "n4", "effects": { "kit_loud": true, "kit_stealth": false, "kit_fieldmed": false } },
+        { "text": "Field med kit.", "to": "n4", "effects": { "kit_fieldmed": true, "kit_stealth": false, "kit_loud": false } }
+      ]
+    },
+    {
+      "id": "n5",
+      "text": "Patrol pattern: eleven steps, pause, head turn. Again.",
+      "choices": [
+        { "text": "Move on the pause; service stair to security.", "to": "n12" },
+        { "text": "Back to City Hub.", "to": "hub" }
+      ]
+    },
+    {
+      "id": "n6",
+      "text": "An enforcer scans your badge. Green. “We hire quiet people. Interested?”",
+      "choices": [
+        { "text": "Flash your forged pass and walk through.", "to": "n12", "conditions": [ { "var": "prep_pass", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Prep a front-door pass first on the Prep Board." },
+        { "text": "Sign and keep a straight face.", "to": "n11", "effects": { "corpContract": true, "corpRep": 2 } },
+        { "text": "Pretend to think; slide to security.", "to": "n12", "effects": { "corpRep": 1 } },
+        { "text": "Decline and wander toward security.", "to": "n12" }
+      ]
+    },
+    {
+      "id": "n8",
+      "text": "The old AI hums. “When winter blocks your lane, say ‘Kore.’ If I ride your signal, I can blur cameras for a half-minute when you ask.”",
+      "choices": [
+        { "text": "Let her ride your signal.", "to": "n3_end", "effects": { "ai_ride": true, "met_mother": true, "foundCommandHint": true } },
+        { "text": "Keep it out. Trust your hands.", "to": "n3_end", "effects": { "met_mother": true } }
+      ]
+    },
+    {
+      "id": "n9",
+      "text": "You balance along the monorail spine. Below, the plaza glows. A maintenance drone clacks by.",
+      "choices": [
+        { "text": "Zip to the hatch and drop.", "to": "n12" },
+        { "text": "Shadow the drone to hatch G-13.", "to": "n12" },
+        { "text": "Use your chalk marks to cut a quiet line.", "to": "n12", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Scout the rooftop line on the Prep Board first." },
+        { "text": "Gloves on: grip the hot hatch and slip in.", "to": "n12", "conditions": [ { "var": "prep_mila_gloves", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Borrow Mila’s insulated gloves on the Prep Board." }
+      ]
+    },
+    {
+      "id": "n10",
+      "text": "Sewer stink. Your drone follows a fiber line. Timer: nine minutes.",
+      "choices": [
+        { "text": "Overclock through the packet shaper.", "to": "n13" },
+        { "text": "Spoof housekeeping and glide under.", "to": "n13" }
+      ]
+    },
+    {
+      "id": "n11",
+      "text": "White room. A contract slides across the table. “Deliver the Key. We keep you comfortable.”",
+      "choices": [
+        { "text": "Nod. Plan to double-cross later.", "to": "n12" },
+        { "text": "Mean it. Become their blade.", "to": "n12" }
+      ]
+    },
+    {
+      "id": "n12",
+      "text": "Security hub. Glass. Cool air. A side panel says OCCUPIED.",
+      "choices": [
+        { "text": "Open the cells. Let people run.", "to": "n12a", "effects": { "freedCitizens": true } },
+        { "text": "Loop the cameras. Call the lift quietly.", "to": "n12b" },
+        { "text": "Ask Mother-of-Needles to blur cameras for 30 seconds.", "to": "n12c", "conditions": [ { "var": "ai_ride", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Invite the AI earlier." },
+        { "text": "Patch Street Radio using the code path.", "to": "n20", "conditions": [ { "var": "prep_radio_codes", "op": "=", "value": true }, { "var": "evidenceShard", "op": "=", "value": true }, { "var": "met_juno", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Share radio codes at prep, meet Juno, and carry a shard." },
+        { "text": "Plant the Data Nuke (with Key).", "to": "e3b", "conditions": [ { "var": "ghostKey", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Bring the Ghost Key or a verifiable shard." },
+        { "text": "Plant the Data Nuke (with shard).", "to": "e3b", "conditions": [ { "var": "evidenceShard", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Bring a verifiable shard or the Ghost Key." },
+        { "text": "Quick detour: stairwell camera timing.", "to": "n22" },
+        { "text": "Quick detour: help an injured guard.", "to": "n23" },
+        { "text": "Quick detour: glance at a mural.", "to": "n24" },
+        { "text": "Quick detour: check the break room.", "to": "n25" },
+        { "text": "Quick detour: read a text from Mila.", "to": "n26" }
+      ]
+    },
+    {
+      "id": "n12c",
+      "text": "You whisper “Kore.” Cameras fall half a beat out of sync. Doors breathe. You have a small window.",
+      "choices": [
+        { "text": "Use the window to move deeper.", "to": "n12b" },
+        { "text": "Use the window to plant the Data Nuke now (if ready).", "to": "n12" }
+      ]
+    },
+    {
+      "id": "n12a",
+      "text": "Locks click open. A woman grips your sleeve. “If you make it—say our names in the light.” A cracked shard changes pockets.",
+      "choices": [
+        { "text": "Pocket the shard and run for the lift.", "to": "n13", "effects": { "evidenceShard": true } }
+      ]
+    },
+    {
+      "id": "n12b",
+      "text": "The lift opens. Cold air rolls up from below.",
+      "choices": [
+        { "text": "Descend.", "to": "n13" }
+      ]
+    },
+    {
+      "id": "n13",
+      "text": "The vault room is quiet like a church. On a stand hums the Ghost Key.",
+      "choices": [
+        { "text": "Pocket the Key. No implants.", "to": "n14", "effects": { "ghostKey": true, "addLore": ["ghost-key","persephone-myth"] } },
+        { "text": "Take a small slice into your head.", "to": "n14", "effects": { "ghostKey": true, "addLore": ["ghost-key","persephone-myth"] } },
+        { "text": "Smash the Key. Take raw logs only.", "to": "n14", "effects": { "ghostKey": false, "evidenceShard": true } },
+        { "text": "Return to Security Hub to act inside HQ.", "to": "n12" }
+      ]
+    },
+    {
+      "id": "n14",
+      "text": "Sirens start somewhere above. You need an exit and a way to tell the city.",
+      "choices": [
+        { "text": "Street Radio: bring proof to Juno’s tower.", "to": "n20", "conditions": [ { "var": "evidenceShard", "op": "=", "value": true }, { "var": "met_juno", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Meet Juno and carry a proof shard." },
+        { "text": "Civic Mesh: anchor proofs at clinics and libraries.", "to": "n19", "conditions": [ { "var": "evidenceShard", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You need a verifiable shard to anchor." },
+        { "text": "Sell back to Acheron for a safe life.", "to": "n16", "conditions": [ { "var": "corpContract", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You need a corporate contact or contract first." },
+        { "text": "Keep it and vanish. Work slow.", "to": "n17" },
+        { "text": "Optional decoy: post a tiny note on jndl.dev.", "to": "n15" },
+        { "text": "Return to Security Hub to plant the Data Nuke.", "to": "n12", "conditions": [ { "var": "ghostKey", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Bring the Ghost Key (or grab a shard and come back via the lift)." },
+        { "text": "Guns up: fight your way out.", "to": "n18" }
+      ]
+    },
+    {
+      "id": "n15",
+      "text": "You set a small post on a terminal-style site. A quiet wink about spring. Just an easter egg.",
+      "choices": [
+        { "text": "Hide a playful cipher in the post.", "to": "n14", "effects": { "blogPosted": true, "blogClean": false, "foundCommandHint": true, "addLore": ["persephone-site"] } },
+        { "text": "Leave it clean and harmless.", "to": "n14", "effects": { "blogPosted": true, "blogClean": true, "addLore": ["persephone-site"] } }
+      ]
+    },
+    {
+      "id": "n22",
+      "text": "Stairwell camera clicks. With a stealth kit, you can cross while it turns. Without it, you’ll need a distraction.",
+      "choices": [
+        { "text": "Glide through on the turn (stealth kit).", "to": "n12", "conditions": [ { "var": "kit_stealth", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Requires the stealth kit." },
+        { "text": "Drop a loud battery to pull eyes away (loud kit).", "to": "n12", "conditions": [ { "var": "kit_loud", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Requires the loud kit." },
+        { "text": "Grip the hot bracket with Mila’s gloves and slip by.", "to": "n12", "conditions": [ { "var": "prep_mila_gloves", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Borrow Mila’s gloves in prep." },
+        { "text": "Wait for a cleaner with a cart and follow.", "to": "n12" }
+      ]
+    },
+    {
+      "id": "n23",
+      "text": "A guard is bleeding from a nick on the forearm, scared and hiding it.",
+      "choices": [
+        { "text": "Patch him with your field kit; ask him to look away.", "to": "n12", "conditions": [ { "var": "kit_fieldmed", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Requires the field med kit." },
+        { "text": "Tell him to breathe and count to ten. Keep walking.", "to": "n12" }
+      ]
+    },
+    {
+      "id": "n24",
+      "text": "You pass a mural of a girl stepping out of snow into tall grass. The plaque says “Kore.”",
+      "choices": [
+        { "text": "Note it and move on.", "to": "n12", "effects": { "foundCommandHint": true } }
+      ]
+    },
+    {
+      "id": "n25",
+      "text": "Break room. Half a sandwich and a deck of cards. A logbook lists “key ceremonies” on every Friday the 13th.",
+      "choices": [
+        { "text": "Photograph the logbook; keep moving.", "to": "n12" },
+        { "text": "Glance at the corkboard.", "to": "n28" }
+      ]
+    },
+    {
+      "id": "n26",
+      "text": "Service corridor. Your phone buzzes. A short text from Mila: “You okay?”",
+      "choices": [
+        { "text": "Text back: “Still here.”", "to": "n12", "conditions": [ { "var": "met_mila", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You haven’t met Mila tonight." },
+        { "text": "Pocket the phone and focus.", "to": "n12" }
+      ]
+    },
+    {
+      "id": "n28",
+      "text": "Break room corkboard. Old photo: a right hand wrapped in silver tape. Caption torn. You’ve seen a hand like that. Somewhere.",
+      "choices": [
+        { "text": "Pocket a copy; back to the corridor.", "to": "n12", "effects": { "addLore": ["johnny-silverhand"] } }
+      ]
+    },
+    {
+      "id": "n20",
+      "text": "Juno’s tower hums. She speaks each name slowly, then again. Callers correct spellings.",
+      "choices": [
+        { "text": "Guard the signal until the list is done.", "to": "e3" },
+        { "text": "Slip out while the city listens.", "to": "e3" }
+      ]
+    },
+    {
+      "id": "n16",
+      "text": "Executive elevator. A handler waits with a pen. “Sign and this never happened.”",
+      "choices": [
+        { "text": "Sign. Become their ghost.", "to": "e4", "conditions": [ { "var": "corpContract", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Take a corp contract earlier." },
+        { "text": "Trade the Key for amnesty anyway.", "to": "e4", "effects": { "corpContract": true } },
+        { "text": "Smile, then leak a copy into their clean net.", "to": "e3", "conditions": [ { "var": "evidenceShard", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You need a copyable shard to leak." }
+      ]
+    },
+    {
+      "id": "n17",
+      "text": "Rooftop. Rain taps your shoulders. The city hums.",
+      "choices": [
+        { "text": "Refuse the Key’s whisper. Help slow.", "to": "e3" },
+        { "text": "Hand the Key to Johnny. Share the risk.", "to": "e3", "conditions": [ { "var": "ally_johnny", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You need to still be in touch with Johnny." },
+        { "text": "Step off and end the noise.", "to": "e1" },
+        { "text": "Let the Key finish rewriting you.", "to": "e1" }
+      ]
+    },
+    {
+      "id": "n18",
+      "text": "The hallway cracks with light. A black-team moves like one body.",
+      "choices": [
+        { "text": "Use the freed crowd as cover.", "to": "e3", "conditions": [ { "var": "freedCitizens", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You didn’t open the cells." },
+        { "text": "Call extraction on the favor you banked.", "to": "n16", "conditions": [ { "var": "corpContract", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Take the contract earlier." },
+        { "text": "Hold your ground until the mag runs dry.", "to": "e2" }
+      ]
+    },
+    {
+      "id": "e1",
+      "type": "ending",
+      "endingId": "E1",
+      "title": "SELF-ERASE",
+      "text": "You choose silence: a step into rain, or letting the Key finish its work inside your head. The city keeps moving. Somewhere, a neighbor locks her door and wonders if you made it home."
+    },
+    {
+      "id": "e2",
+      "type": "ending",
+      "endingId": "E2",
+      "title": "CLEANUP",
+      "text": "The team in black works fast. The report will say ‘resolved.’ The hallway grows quiet. Outside, buses keep their routes."
+    },
+    {
+      "id": "e3",
+      "type": "ending",
+      "endingId": "E3",
+      "title": "SIGNAL BLOOM",
+      "text": "Proof spreads by radio and by hand. People compare lists in lobbies. Some doors open. Others take longer. On another Friday the 13th, fewer names go missing."
+    },
+    {
+      "id": "e3b",
+      "type": "ending",
+      "endingId": "E3",
+      "title": "SIGNAL BLOOM — BLACKOUT & BROADCAST",
+      "text": "Inside HQ, you pull on the quiet threads: payroll, detention rosters, vendor ledgers. A single push and screens blink citywide. Doors fail open. Red lights turn white. Street Radio reads names while the Civic Mesh catches proofs and replicates them. Nobody gets hurt. Systems complain. People walk out."
+    },
+    {
+      "id": "e4",
+      "type": "ending",
+      "endingId": "E4",
+      "title": "EXECUTIVE GHOST",
+      "text": "You trade questions for a badge that opens any door. Your job becomes keeping other people from doing what you just did."
+    }
+  ]
+}
