@@ -234,14 +234,14 @@
       "id": "p0",
       "text": "Pre-Heist Prep Board — pick small tasks that help later.",
       "choices": [
-        { "text": "Scout the Rooftop Line — ✓ done", "to": "hub", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": true } ] },
-        { "text": "Scout the Rooftop Line", "to": "p1", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": false } ] },
-        { "text": "Forge a Front-Door Pass — ✓ done", "to": "hub", "conditions": [ { "var": "prep_pass", "op": "=", "value": true } ] },
-        { "text": "Forge a Front-Door Pass", "to": "p2", "conditions": [ { "var": "ally_johnny", "op": "=", "value": true }, { "var": "prep_pass", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Johnny first." },
-        { "text": "Borrow Mila’s Insulated Gloves — ✓ done", "to": "hub", "conditions": [ { "var": "prep_mila_gloves", "op": "=", "value": true } ] },
-        { "text": "Borrow Mila’s Insulated Gloves", "to": "p3", "conditions": [ { "var": "met_mila", "op": "=", "value": true }, { "var": "prep_mila_gloves", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Mila at her door." },
-        { "text": "Share Street Radio Codes — ✓ done", "to": "hub", "conditions": [ { "var": "prep_radio_codes", "op": "=", "value": true } ] },
-        { "text": "Share Street Radio Codes", "to": "p4", "conditions": [ { "var": "met_juno", "op": "=", "value": true }, { "var": "promised_juno", "op": "=", "value": true }, { "var": "prep_radio_codes", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Juno and promise a shard." },
+        { "text": "Scout the Rooftop Line — ✓ done", "to": "hub", "slug": "prep_rooftop", "variant": "done", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": true } ] },
+        { "text": "Scout the Rooftop Line", "to": "p1", "slug": "prep_rooftop", "variant": "available", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": false } ] },
+        { "text": "Forge a Front-Door Pass — ✓ done", "to": "hub", "slug": "prep_pass", "variant": "done", "conditions": [ { "var": "prep_pass", "op": "=", "value": true } ] },
+        { "text": "Forge a Front-Door Pass", "to": "p2", "slug": "prep_pass", "variant": "available", "conditions": [ { "var": "ally_johnny", "op": "=", "value": true }, { "var": "prep_pass", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Johnny first." },
+        { "text": "Borrow Mila’s Insulated Gloves — ✓ done", "to": "hub", "slug": "prep_mila_gloves", "variant": "done", "conditions": [ { "var": "prep_mila_gloves", "op": "=", "value": true } ] },
+        { "text": "Borrow Mila’s Insulated Gloves", "to": "p3", "slug": "prep_mila_gloves", "variant": "available", "conditions": [ { "var": "met_mila", "op": "=", "value": true }, { "var": "prep_mila_gloves", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Mila at her door." },
+        { "text": "Share Street Radio Codes — ✓ done", "to": "hub", "slug": "prep_radio_codes", "variant": "done", "conditions": [ { "var": "prep_radio_codes", "op": "=", "value": true } ] },
+        { "text": "Share Street Radio Codes", "to": "p4", "slug": "prep_radio_codes", "variant": "available", "conditions": [ { "var": "met_juno", "op": "=", "value": true }, { "var": "promised_juno", "op": "=", "value": true }, { "var": "prep_radio_codes", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Juno and promise a shard." },
         { "text": "Back to City Hub", "to": "hub" }
       ]
     },
