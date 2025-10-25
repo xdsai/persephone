@@ -107,7 +107,27 @@ const options = {
   root: Root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.png" />\n    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />\n    <meta name="theme-color" content="#0a0f25" media="(prefers-color-scheme: dark)" />\n    <meta name="theme-color" content="#0a0f25" media="(prefers-color-scheme: light)" />\n    <meta name="color-scheme" content="dark light" />\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />\n		<style>\n			html, body {\n				height: 100%;\n				overflow: hidden;\n			}\n		</style>\n		' + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
+    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + `/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0a0f25" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0a0f25" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<style>
+			html, body {
+				height: 100%;
+				overflow: hidden;
+				background:
+					radial-gradient(1200px 800px at 18% 18%, rgba(255,0,32,0.10) 0, rgba(2,3,10,0) 60%),
+					radial-gradient(1000px 700px at 82% 65%, rgba(255,46,84,0.12) 0, rgba(1,2,8,0) 60%),
+					linear-gradient(120deg, #0b0205, #12070a 58%, #060104);
+				background-color: #0b0205;
+				color: #ffe8ec;
+				font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+			}
+		</style>
+		` + head + '\n	</head>\n	<body data-sveltekit-preload-data="hover">\n		<div style="display: contents">' + body + "</div>\n	</body>\n</html>\n",
     error: ({ status, message }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -168,7 +188,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "vb7b0"
+  version_hash: "166tmvz"
 };
 function get_hooks() {
   return {};

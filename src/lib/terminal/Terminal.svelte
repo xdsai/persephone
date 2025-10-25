@@ -17,6 +17,7 @@
 
   type Row = { html: string };
   let rows: Row[] = [];
+  let endEl: HTMLDivElement;
   
   const MAN: Record<string, string> = {
     help: 'help — list available commands',
@@ -140,7 +141,19 @@
     inputEl?.focus();
   }
 
-  function scrollToBottom() { term?.scrollTo({ top: term.scrollHeight }); }
+  let scrollRAF: number | null = null;
+  function ensureAtBottom(tries = 3) {
+    if (!term) return;
+    const near = (term.scrollHeight - term.scrollTop - term.clientHeight) < 2;
+    if (near) return;
+    term.scrollTop = term.scrollHeight;
+    if (tries > 0) requestAnimationFrame(() => ensureAtBottom(tries - 1));
+  }
+  function scrollToBottom() {
+    if (endEl?.scrollIntoView) endEl.scrollIntoView({ block: 'end' });
+    if (scrollRAF) cancelAnimationFrame(scrollRAF);
+    scrollRAF = requestAnimationFrame(() => ensureAtBottom(2));
+  }
 
   function println(html: string) { rows = [...rows, { html }]; tick().then(() => { scrollToBottom(); }); }
 
@@ -186,6 +199,9 @@
         }
         case 'clear':
           rows = [];
+          await tick();
+          scrollToBottom();
+          focusInput();
           break;
         case 'cd':
           cd(args, writeOut);
@@ -560,7 +576,10 @@
       e.preventDefault();
       const href = navEl.getAttribute('href') || '';
       if (href) window.location.href = href;
+      return;
     }
+    // clicking empty space should focus the input
+    focusInput();
   }
 
   function handleTerminalKey(e: KeyboardEvent) {
@@ -602,13 +621,14 @@
   </div>
   <div class="term-pane">
     <div class="terminal" bind:this={term} on:click={handleTerminalClick} on:keydown={handleTerminalKey}>
-      {#each rows as r}
-        <div class="row">{@html r.html}</div>
-      {/each}
-      <div class="row input">
-        <span class="prompt" aria-hidden="true">{promptText}</span>
-        <input bind:this={inputEl} class="readline" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" bind:value={line} on:keydown={onKeyDown} />
-      </div>
+    {#each rows as r}
+      <div class="row">{@html r.html}</div>
+    {/each}
+    <div class="row input">
+      <span class="prompt" aria-hidden="true">{promptText}</span>
+      <input bind:this={inputEl} class="readline" type="text" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" bind:value={line} on:keydown={onKeyDown} />
+    </div>
+    <div class="end" aria-hidden="true" bind:this={endEl}></div>
     </div>
     <div class="fx fx-scan" aria-hidden="true"></div>
     <div class="fx fx-noise" aria-hidden="true"></div>
@@ -741,6 +761,9 @@
     position: relative;
     height: 100%;
     min-height: 0; /* allow the grid child to shrink and scroll */
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable both-edges;
     background-image:
       repeating-linear-gradient(to bottom, rgba(102,226,255,0.05) 0px, rgba(102,226,255,0.05) 2px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 6px),
       radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),
@@ -756,7 +779,7 @@
   .fx-noise { background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.08) 0px, rgba(102,226,255,0.08) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 4px); mix-blend-mode: screen; opacity: 0.22; animation: fx-noise 7s ease-in-out infinite alternate; }
   @keyframes fx-noise { 0% { opacity: 0.10; } 100% { opacity: 0.18; } }
   @keyframes sweep { 0% { opacity: 0.25; } 50% { opacity: 0.35; } 100% { opacity: 0.25; } }
-  .row { white-space: pre-wrap; word-wrap: break-word; color: #d6f2ff; text-shadow: 0 0 6px rgba(102,226,255,0.25), 0 0 8px rgba(255,23,68,0.18); }
+  .row { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; color: #d6f2ff; text-shadow: 0 0 6px rgba(102,226,255,0.25), 0 0 8px rgba(255,23,68,0.18); }
   .row + .row { margin-top: 6px; }
   /* Ensure dynamic HTML inside rows is styled (use :global for injected markup) */
   .row :global(.cmdline) { color: #c7f0ff; text-shadow: 0 0 10px rgba(102,226,255,0.55); }
@@ -764,6 +787,7 @@
   .row.input { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px; }
   .readline { width: 100%; background: transparent; color: #e7e4ff; border: none; outline: none; font: inherit; caret-color: #8fe9ff; text-shadow: 0 0 6px rgba(102,226,255,0.35); }
   .readline::selection { background: rgba(102,226,255,0.25); }
+  .end { height: 1px; }
 
   .prompt { color: #a8f2ff; text-shadow: 0 0 10px rgba(102,226,255,0.6), 0 0 6px rgba(255,23,68,0.25); }
   .g { color: #89f7a1; }
