@@ -732,13 +732,15 @@
   .title { opacity: 0.95; text-shadow: 0 0 10px rgba(102,226,255,0.35), 0 0 8px rgba(120,200,255,0.25); }
   .uptime { opacity: 0.6; }
 
-  .term-pane { position: relative; overflow: hidden; }
+  .term-pane { position: relative; overflow: hidden; display: grid; grid-template-rows: 1fr; }
   .terminal {
     overflow: auto;
     padding: 16px;
     line-height: 1.5;
     font-size: 14px;
     position: relative;
+    height: 100%;
+    min-height: 0; /* allow the grid child to shrink and scroll */
     background-image:
       repeating-linear-gradient(to bottom, rgba(102,226,255,0.05) 0px, rgba(102,226,255,0.05) 2px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 6px),
       radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),

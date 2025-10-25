@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "meta": {
-    "title": "NEON THIRTEEN : PERSEPHONE RUN — v9 (gated prep, clean exits)",
+    "title": "NEON THIRTEEN : PERSEPHONE RUN — v10 (alert routing, ARG hook, clean gating)",
     "protagonist": "Nine",
     "date": "2077-08-13",
     "fridayThe13th": true,
@@ -37,21 +37,21 @@
         "cmd": "persephone --bloom",
         "aliases": ["pomegranate", "kore13"],
         "discoverHint": "Hints about seeds/spring/Kore appear only if you lace the decoy.",
-        "effect": "Opens an ARG panel if the decoy blog was laced.",
-        "requires": "blogPosted && blogClean == false"
+        "effect": "Open the Persephone panel (ARG) if arg_bloom_ready = true.",
+        "requires": "arg_bloom_ready == true"
       },
       {
         "cmd": "whois alex",
         "aliases": ["id alex", "about alex", "profile alex"],
         "discoverHint": "“names resolve to records” shows up in a few places.",
-        "effect": "Prints the 2077-08-13 post metadata + checksum clue.",
+        "effect": "Print the 2077-08-13 post metadata + checksum clue.",
         "requires": "true"
       },
       {
         "cmd": "whois johnny",
         "aliases": ["id johnny", "about johnny"],
         "discoverHint": "A torn caption and a hand wrapped in silver tape.",
-        "effect": "Prints 'record incomplete' unless the 'johnny-silverhand' lore is found.",
+        "effect": "Print 'record incomplete' unless the 'johnny-silverhand' lore is found.",
         "requires": "true"
       }
     ],
@@ -86,7 +86,10 @@
         "prep_rooftop": false,
         "prep_pass": false,
         "prep_mila_gloves": false,
-        "prep_radio_codes": false
+        "prep_radio_codes": false,
+        "alarmsRaised": false,
+        "arg_bloom_ready": false,
+        "arg_bloom_opened": false
       },
       "loreDiscoveries": []
     },
@@ -231,14 +234,14 @@
       "id": "p0",
       "text": "Pre-Heist Prep Board — pick small tasks that help later.",
       "choices": [
-        { "text": "Scout the Rooftop Line — ✓ done", "to": "hub", "slug": "prep_rooftop", "variant": "done", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": true } ] },
-        { "text": "Scout the Rooftop Line", "to": "p1", "slug": "prep_rooftop", "variant": "available", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Scout later if needed." },
-        { "text": "Forge a Front-Door Pass — ✓ done", "to": "hub", "slug": "prep_pass", "variant": "done", "conditions": [ { "var": "prep_pass", "op": "=", "value": true } ] },
-        { "text": "Forge a Front-Door Pass", "to": "p2", "slug": "prep_pass", "variant": "available", "conditions": [ { "var": "ally_johnny", "op": "=", "value": true }, { "var": "prep_pass", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Johnny first." },
-        { "text": "Borrow Mila’s Insulated Gloves — ✓ done", "to": "hub", "slug": "prep_mila_gloves", "variant": "done", "conditions": [ { "var": "prep_mila_gloves", "op": "=", "value": true } ] },
-        { "text": "Borrow Mila’s Insulated Gloves", "to": "p3", "slug": "prep_mila_gloves", "variant": "available", "conditions": [ { "var": "met_mila", "op": "=", "value": true }, { "var": "prep_mila_gloves", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Mila at her door." },
-        { "text": "Share Street Radio Codes — ✓ done", "to": "hub", "slug": "prep_radio_codes", "variant": "done", "conditions": [ { "var": "prep_radio_codes", "op": "=", "value": true } ] },
-        { "text": "Share Street Radio Codes", "to": "p4", "slug": "prep_radio_codes", "variant": "available", "conditions": [ { "var": "met_juno", "op": "=", "value": true }, { "var": "promised_juno", "op": "=", "value": true }, { "var": "prep_radio_codes", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Juno and promise a shard." },
+        { "text": "Scout the Rooftop Line — ✓ done", "to": "hub", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": true } ] },
+        { "text": "Scout the Rooftop Line", "to": "p1", "conditions": [ { "var": "prep_rooftop", "op": "=", "value": false } ] },
+        { "text": "Forge a Front-Door Pass — ✓ done", "to": "hub", "conditions": [ { "var": "prep_pass", "op": "=", "value": true } ] },
+        { "text": "Forge a Front-Door Pass", "to": "p2", "conditions": [ { "var": "ally_johnny", "op": "=", "value": true }, { "var": "prep_pass", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Johnny first." },
+        { "text": "Borrow Mila’s Insulated Gloves — ✓ done", "to": "hub", "conditions": [ { "var": "prep_mila_gloves", "op": "=", "value": true } ] },
+        { "text": "Borrow Mila’s Insulated Gloves", "to": "p3", "conditions": [ { "var": "met_mila", "op": "=", "value": true }, { "var": "prep_mila_gloves", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Mila at her door." },
+        { "text": "Share Street Radio Codes — ✓ done", "to": "hub", "conditions": [ { "var": "prep_radio_codes", "op": "=", "value": true } ] },
+        { "text": "Share Street Radio Codes", "to": "p4", "conditions": [ { "var": "met_juno", "op": "=", "value": true }, { "var": "promised_juno", "op": "=", "value": true }, { "var": "prep_radio_codes", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Meet Juno and promise a shard." },
         { "text": "Back to City Hub", "to": "hub" }
       ]
     },
@@ -357,7 +360,7 @@
         { "text": "Quick detour: help an injured guard.", "to": "n23" },
         { "text": "Quick detour: glance at a mural.", "to": "n24" },
         { "text": "Quick detour: check the break room.", "to": "n25" },
-        { "text": "Quick detour: read a text from Mila.", "to": "n26" }
+        { "text": "Quick detour: read a text from Mila.", "to": "n26", "conditions": [ { "var": "met_mila", "op": "=", "value": true } ] }
       ]
     },
     {
@@ -383,13 +386,25 @@
       ]
     },
     {
+      "id": "n12_alert",
+      "text": "Security hub under alarm. Red bars crawl across the glass; drones pivot and listen.",
+      "choices": [
+        { "text": "Ask Mother-of-Needles to blur cameras for 30 seconds.", "to": "n12c", "conditions": [ { "var": "ai_ride", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Invite the AI earlier." },
+        { "text": "Patch Street Radio from inside (code path).", "to": "n20", "conditions": [ { "var": "prep_radio_codes", "op": "=", "value": true }, { "var": "evidenceShard", "op": "=", "value": true }, { "var": "met_juno", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Share radio codes at prep, meet Juno, and carry a shard." },
+        { "text": "Plant the Data Nuke (with Key).", "to": "e3b", "conditions": [ { "var": "ghostKey", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Bring the Ghost Key or a verifiable shard." },
+        { "text": "Plant the Data Nuke (with shard).", "to": "e3b", "conditions": [ { "var": "evidenceShard", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Bring a verifiable shard or the Ghost Key." },
+        { "text": "Stand your ground and draw them off.", "to": "n18" }
+      ]
+    },
+    {
       "id": "n13",
       "text": "The vault room is quiet like a church. On a stand hums the Ghost Key.",
       "choices": [
-        { "text": "Pocket the Key. No implants.", "to": "n14", "effects": { "ghostKey": true, "addLore": ["ghost-key","persephone-myth"] } },
-        { "text": "Take a small slice into your head.", "to": "n14", "effects": { "ghostKey": true, "addLore": ["ghost-key","persephone-myth"] } },
-        { "text": "Smash the Key. Take raw logs only.", "to": "n14", "effects": { "ghostKey": false, "evidenceShard": true } },
-        { "text": "Return to Security Hub to act inside HQ.", "to": "n12" }
+        { "text": "Pocket the Key. No implants.", "to": "n14", "effects": { "ghostKey": true, "alarmsRaised": true, "addLore": ["ghost-key","persephone-myth"] } },
+        { "text": "Take a small slice into your head.", "to": "n14", "effects": { "ghostKey": true, "alarmsRaised": true, "addLore": ["ghost-key","persephone-myth"] } },
+        { "text": "Smash the Key. Take raw logs only.", "to": "n14", "effects": { "ghostKey": false, "evidenceShard": true, "alarmsRaised": true } },
+        { "text": "Return to Security Hub to act inside HQ.", "to": "n12", "conditions": [ { "var": "alarmsRaised", "op": "=", "value": false } ], "showIfLocked": true, "lockedText": "Alarms are live; use the alert route below." },
+        { "text": "Return to Security Hub (alarms live).", "to": "n12_alert", "conditions": [ { "var": "alarmsRaised", "op": "=", "value": true } ] }
       ]
     },
     {
@@ -401,7 +416,7 @@
         { "text": "Sell back to Acheron for a safe life.", "to": "n16", "conditions": [ { "var": "corpContract", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You need a corporate contact or contract first." },
         { "text": "Keep it and vanish. Work slow.", "to": "n17" },
         { "text": "Optional decoy: post a tiny note on jndl.dev.", "to": "n15" },
-        { "text": "Return to Security Hub to plant the Data Nuke.", "to": "n12", "conditions": [ { "var": "ghostKey", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Bring the Ghost Key (or grab a shard and come back via the lift)." },
+        { "text": "Return to Security Hub to plant the Data Nuke.", "to": "n12_alert", "conditions": [ { "var": "ghostKey", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Bring the Ghost Key (or grab a shard and come back via the lift)." },
         { "text": "Guns up: fight your way out.", "to": "n18" }
       ]
     },
@@ -409,8 +424,24 @@
       "id": "n15",
       "text": "You set a small post on a terminal-style site. A quiet wink about spring. Just an easter egg.",
       "choices": [
-        { "text": "Hide a playful cipher in the post.", "to": "n14", "effects": { "blogPosted": true, "blogClean": false, "foundCommandHint": true, "addLore": ["persephone-site"] } },
-        { "text": "Leave it clean and harmless.", "to": "n14", "effects": { "blogPosted": true, "blogClean": true, "addLore": ["persephone-site"] } }
+        { "text": "Hide a playful cipher in the post.", "to": "n14", "effects": { "blogPosted": true, "blogClean": false, "foundCommandHint": true, "arg_bloom_ready": true, "addLore": ["persephone-site"] } },
+        { "text": "Leave it clean and harmless.", "to": "n14", "effects": { "blogPosted": true, "blogClean": true, "arg_bloom_ready": false, "addLore": ["persephone-site"] } }
+      ]
+    },
+    {
+      "id": "n19",
+      "text": "Clinic. Library. Repair co-op. You walk the Civic Mesh and leave proofs where people already gather.",
+      "choices": [
+        { "text": "Stay visible. Teach people how to check the proofs.", "to": "e3" },
+        { "text": "Move fast. Leave instructions and disappear.", "to": "e3" }
+      ]
+    },
+    {
+      "id": "n20",
+      "text": "Juno’s tower hums. She speaks each name slowly, then again. Callers correct spellings.",
+      "choices": [
+        { "text": "Guard the signal until the list is done.", "to": "e3" },
+        { "text": "Slip out while the city listens.", "to": "e3" }
       ]
     },
     {
@@ -450,7 +481,7 @@
       "id": "n26",
       "text": "Service corridor. Your phone buzzes. A short text from Mila: “You okay?”",
       "choices": [
-        { "text": "Text back: “Still here.”", "to": "n12", "conditions": [ { "var": "met_mila", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "You haven’t met Mila tonight." },
+        { "text": "Text back: “Still here.”", "to": "n12", "conditions": [ { "var": "met_mila", "op": "=", "value": true } ] },
         { "text": "Pocket the phone and focus.", "to": "n12" }
       ]
     },
@@ -462,11 +493,18 @@
       ]
     },
     {
-      "id": "n20",
-      "text": "Juno’s tower hums. She speaks each name slowly, then again. Callers correct spellings.",
+      "id": "e3b",
+      "text": "Inside HQ, you pull on the quiet threads: payroll, detention rosters, vendor ledgers. A single push and screens blink citywide. Doors fail open. Red lights turn white. Street Radio reads names while the Civic Mesh catches proofs and replicates them. Nobody gets hurt. Systems complain. People walk out.",
       "choices": [
-        { "text": "Guard the signal until the list is done.", "to": "e3" },
-        { "text": "Slip out while the city listens.", "to": "e3" }
+        { "text": "Open Persephone panel (persephone --bloom).", "to": "arg1", "conditions": [ { "var": "arg_bloom_ready", "op": "=", "value": true } ], "showIfLocked": true, "lockedText": "Post the laced decoy on jndl.dev first." },
+        { "text": "Finish — SIGNAL BLOOM.", "to": "e3" }
+      ]
+    },
+    {
+      "id": "arg1",
+      "text": "A small terminal overlays the city feed.\n\nPERSEPHONE: six seeds, six blocks. The checksum hums under your fingertips. The panel prints a path:\n\njndl.dev → whois alex → kore13\n\nYou leave a quiet door open for anyone who knows to knock twice.",
+      "choices": [
+        { "text": "Close the panel and let the signal bloom.", "to": "e3", "effects": { "arg_bloom_opened": true } }
       ]
     },
     {
@@ -517,13 +555,6 @@
       "endingId": "E3",
       "title": "SIGNAL BLOOM",
       "text": "Proof spreads by radio and by hand. People compare lists in lobbies. Some doors open. Others take longer. On another Friday the 13th, fewer names go missing."
-    },
-    {
-      "id": "e3b",
-      "type": "ending",
-      "endingId": "E3",
-      "title": "SIGNAL BLOOM — BLACKOUT & BROADCAST",
-      "text": "Inside HQ, you pull on the quiet threads: payroll, detention rosters, vendor ledgers. A single push and screens blink citywide. Doors fail open. Red lights turn white. Street Radio reads names while the Civic Mesh catches proofs and replicates them. Nobody gets hurt. Systems complain. People walk out."
     },
     {
       "id": "e4",
