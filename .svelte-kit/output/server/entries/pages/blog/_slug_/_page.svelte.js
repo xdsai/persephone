@@ -7,12 +7,7 @@ import { marked } from "marked";
 const PersephoneRun = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { json = null } = $$props;
   let { src = "/story.json" } = $$props;
-  marked.setOptions({
-    breaks: true,
-    gfm: true,
-    mangle: false,
-    headerIds: false
-  });
+  marked.setOptions({ breaks: true, gfm: true });
   if ($$props.json === void 0 && $$bindings.json && json !== void 0)
     $$bindings.json(json);
   if ($$props.src === void 0 && $$bindings.src && src !== void 0)
@@ -27,7 +22,7 @@ const css = {
 };
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { data } = $$props;
-  const isPersephonePost = !!data.post && (data.post.slug === "neon-thirteen-persephone-run" || (data.post.title || "").toLowerCase().includes("neon thirteen"));
+  const isPersephonePost = !!data.post && (data.post.slug === "neon-thirteen-persephone-run" || data.post.slug === "corrections-and-clarifications" || (data.post.title || "").toLowerCase().includes("neon thirteen") || (data.post.title || "").toLowerCase().includes("corrections & clarifications"));
   if ($$props.data === void 0 && $$bindings.data && data !== void 0)
     $$bindings.data(data);
   $$result.css.add(css);
@@ -36,7 +31,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     ${data.post.date ? `<p class="date svelte-kt9slr">${escape(data.post.date)}</p>` : ``}
     <article class="content svelte-kt9slr"><!-- HTML_TAG_START -->${data.post.html}<!-- HTML_TAG_END --></article>
     ${isPersephonePost ? `${``}
-      <details class="game svelte-kt9slr" id="persephone"><summary class="svelte-kt9slr">Play NEON THIRTEEN: PERSEPHONE RUN</summary>
+      <details class="game svelte-kt9slr" id="persephone"><summary class="svelte-kt9slr">Play the Story</summary>
         ${validate_component(PersephoneRun, "PersephoneRun").$$render($$result, { src: "/story.json" }, {}, {})}</details>` : ``}</main>`}`;
 });
 export {

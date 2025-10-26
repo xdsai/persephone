@@ -4,7 +4,7 @@ export const manifest = {
 	assets: new Set(["200.html","_redirects","assets/persephone-run.json","blog/images/portal.jpg","story.json"]),
 	mimeTypes: {".html":"text/html",".json":"application/json",".jpg":"image/jpeg"},
 	_: {
-		client: {"start":{"file":"_app/immutable/entry/start.12e8c5fc.js","imports":["_app/immutable/entry/start.12e8c5fc.js","_app/immutable/chunks/index.0cd60f9d.js","_app/immutable/chunks/singletons.d131786c.js"],"stylesheets":[],"fonts":[]},"app":{"file":"_app/immutable/entry/app.cca4cb1c.js","imports":["_app/immutable/entry/app.cca4cb1c.js","_app/immutable/chunks/index.0cd60f9d.js"],"stylesheets":[],"fonts":[]}},
+		client: {"start":{"file":"_app/immutable/entry/start.6ed97ccc.js","imports":["_app/immutable/entry/start.6ed97ccc.js","_app/immutable/chunks/index.0cd60f9d.js","_app/immutable/chunks/singletons.d320fb32.js"],"stylesheets":[],"fonts":[]},"app":{"file":"_app/immutable/entry/app.45ecd498.js","imports":["_app/immutable/entry/app.45ecd498.js","_app/immutable/chunks/index.0cd60f9d.js"],"stylesheets":[],"fonts":[]}},
 		nodes: [
 			() => import('./nodes/0.js'),
 			() => import('./nodes/1.js'),

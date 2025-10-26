@@ -3,7 +3,12 @@
   import { onMount } from 'svelte';
   export let data: { post: { title: string; date: string; html: string; slug?: string } | null };
 
-  const isPersephonePost = !!data.post && (data.post.slug === 'neon-thirteen-persephone-run' || (data.post.title || '').toLowerCase().includes('neon thirteen'));
+  const isPersephonePost = !!data.post && (
+    data.post.slug === 'neon-thirteen-persephone-run' ||
+    data.post.slug === 'corrections-and-clarifications' ||
+    (data.post.title || '').toLowerCase().includes('neon thirteen') ||
+    (data.post.title || '').toLowerCase().includes('corrections & clarifications')
+  );
   let bannerActive = false;
   onMount(() => {
     try {
@@ -31,7 +36,7 @@
         <div class="banner">Signal live — try <code>persephone --bloom</code> in the terminal on the homepage.</div>
       {/if}
       <details class="game" id="persephone">
-        <summary>Play NEON THIRTEEN: PERSEPHONE RUN</summary>
+        <summary>Play the Story</summary>
         <PersephoneRun src="/story.json" />
       </details>
     {/if}

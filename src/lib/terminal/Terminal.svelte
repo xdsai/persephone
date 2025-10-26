@@ -270,14 +270,15 @@
               const save = raw ? JSON.parse(raw) : null;
               const gotKey = !!(save?.state?.flags?.ghostKey);
               const opDate = storyMeta?.date || '2077-08-13';
-              const opName = 'vault night';
-              const status = gotKey ? 'confirmed: Ghost Key acquired' : 'linked: Ghost Key operation in progress';
-              const blurb = gotKey
-                ? "the one who slipped into Acheron’s vault and pocketed the ghost key during Vault Night."
-                : "the one who's preparing a breach on Acheron’s vault to lift the ghost key.";
-              writeOut(`name: alex\nnickname: went by nine\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
+              const opName = 'Revision Night';
+              const gotCrown = gotKey; // reuse legacy flag for Redactor Crown
+              const status = gotCrown ? 'confirmed: Redactor Crown acquired' : 'linked: Crown operation in progress';
+              const notes = gotCrown
+                ? "the one who slipped into Parallax HQ and pocketed the Redactor Crown during Revision Night."
+                : "the one who's preparing a breach on Parallax HQ to lift the Redactor Crown.";
+              writeOut(`name: alex\nnickname: went by nine\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${notes}`);
             } catch {
-              writeOut('name: nine\nnickname: went by alex\nnotes: linked to the Ghost Key breach on Vault Night.');
+              writeOut('name: alex\nnickname: went by nine\nnotes: linked to a Redactor Crown breach on Revision Night.');
             }
           } else if (target === 'johnny') {
             try {
@@ -302,12 +303,30 @@
               const raw = localStorage.getItem(SAVE_KEY);
               if (!raw) { writeOut('no bloom: signal dormant'); break; }
               const s = JSON.parse(raw);
-              const ok = !!(s?.state?.flags?.blogPosted) && s?.state?.flags?.blogClean === false;
-              if (ok) { showARG = true; writeOut('bloom: signal decrypted (open panel)'); loadArgSave(); }
+              const ok = (s?.state?.flags?.arg_bloom_ready === true)
+                || (!!(s?.state?.flags?.blogPosted) && s?.state?.flags?.blogClean === false);
+              if (ok) { showARG = true; writeOut('bloom: signal decrypted (open panel)'); loadArgSave(); try { s.state.flags.arg_bloom_opened = true; localStorage.setItem(SAVE_KEY, JSON.stringify(s)); } catch {} }
               else { writeOut('no bloom: signal dormant'); }
             } catch { writeOut('no bloom: signal dormant'); }
           } else {
             writeOut('persephone: unknown flag');
+          }
+          break;
+        }
+        case 'canon': {
+          if (argsLower[0] === '--bloom') {
+            await ensureStoryMeta();
+            try {
+              const raw = localStorage.getItem(SAVE_KEY);
+              if (!raw) { writeOut('no bloom: signal dormant'); break; }
+              const s = JSON.parse(raw);
+              const ok = (s?.state?.flags?.arg_bloom_ready === true)
+                || (!!(s?.state?.flags?.blogPosted) && s?.state?.flags?.blogClean === false);
+              if (ok) { showARG = true; writeOut('bloom: signal decrypted (open panel)'); loadArgSave(); try { s.state.flags.arg_bloom_opened = true; localStorage.setItem(SAVE_KEY, JSON.stringify(s)); } catch {} }
+              else { writeOut('no bloom: signal dormant'); }
+            } catch { writeOut('no bloom: signal dormant'); }
+          } else {
+            writeOut('canon: unknown flag');
           }
           break;
         }
@@ -318,28 +337,29 @@
             const raw = localStorage.getItem(SAVE_KEY);
             if (!raw) { writeOut('no bloom: signal dormant'); break; }
             const s = JSON.parse(raw);
-            const ok = !!(s?.state?.flags?.blogPosted) && s?.state?.flags?.blogClean === false;
-            if (ok) { showARG = true; writeOut('bloom: signal decrypted (open panel)'); loadArgSave(); }
+            const ok = (s?.state?.flags?.arg_bloom_ready === true)
+              || (!!(s?.state?.flags?.blogPosted) && s?.state?.flags?.blogClean === false);
+            if (ok) { showARG = true; writeOut('bloom: signal decrypted (open panel)'); loadArgSave(); try { s.state.flags.arg_bloom_opened = true; localStorage.setItem(SAVE_KEY, JSON.stringify(s)); } catch {} }
             else { writeOut('no bloom: signal dormant'); }
           } catch { writeOut('no bloom: signal dormant'); }
           break;
         }
         default:
-          if ((cmdLower + ' ' + (argsLower[0] || '')) === 'whois nine') {
+          if ((cmdLower + ' ' + (argsLower[0] || '')) === 'whois nine' || (cmdLower + ' ' + (argsLower[0] || '')) === 'whois alex') {
             await ensureStoryMeta();
             try {
               const raw = localStorage.getItem(SAVE_KEY);
               const save = raw ? JSON.parse(raw) : null;
-              const gotKey = !!(save?.state?.flags?.ghostKey);
+              const gotCrown = !!(save?.state?.flags?.ghostKey);
               const opDate = storyMeta?.date || '2077-08-13';
-              const opName = 'Vault Night';
-              const status = gotKey ? 'confirmed: Ghost Key acquired' : 'linked: Ghost Key operation in progress';
-              const blurb = gotKey
-                ? 'the one who slipped into Acheron’s vault and pocketed the ghost key during Vault Night.'
-                : 'the one preparing a breach on Acheron’s vault to lift the Ghost Key.';
-              writeOut(`name: alex\nnickname: went by nine\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
+              const opName = 'revision night';
+              const status = gotCrown ? 'confirmed: Crown acquired' : 'linked: Crown operation in progress';
+              const notes = gotCrown
+                ? "the one who slipped into Parallax HQ and pocketed the Redactor Crown during Revision Night."
+                : "the one who's preparing a breach on Parallax HQ to lift the Redactor Crown.";
+              writeOut(`name: alex\nnickname: went by nine\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${notes}`);
             } catch {
-              writeOut('name: nine\nnickname: went by alex\nnotes: linked to the Ghost Key breach on Vault Night.');
+              writeOut('name: alex\nnickname: went by nine\nnotes: linked to a Redactor Crown breach on Revision Night.');
             }
           } else {
             writeOut(`${cmd}: command not found`);
@@ -690,8 +710,8 @@
           {/if}
         </div>
         <div class="argsec links">
-          <a class="nav" href="/blog/neon-thirteen-persephone-run#persephone">Resume Story</a>
-          <a class="nav" href="/blog/neon-thirteen-persephone-run">Open blog entry</a>
+          <a class="nav" href="/blog/corrections-and-clarifications#persephone">Resume Story</a>
+          <a class="nav" href="/blog/corrections-and-clarifications">Open blog entry</a>
         </div>
       </div>
     </div>
@@ -783,10 +803,13 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-gutter: stable both-edges;
     background-image:
-      repeating-linear-gradient(to bottom, rgba(102,226,255,0.05) 0px, rgba(102,226,255,0.05) 2px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 6px),
+      /* pronounced cyan scanlines */
+      repeating-linear-gradient(to bottom, rgba(102,226,255,0.10) 0px, rgba(102,226,255,0.10) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 14px),
+      /* story-style radial glows */
       radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),
       radial-gradient(600px 240px at 110% 110%, rgba(255,23,68,0.08), rgba(0,0,0,0) 50%),
-      linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0)),
+      /* story-style vertical wash */
+      linear-gradient(180deg, rgba(255,23,68,0.06), rgba(102,226,255,0.08) 50%, rgba(0,0,0,0)),
       var(--cp-bg2);
     background-blend-mode: screen, normal, normal, normal, normal;
   }
@@ -794,7 +817,7 @@
   .fx { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; }
   .fx-scan { background: linear-gradient(0deg, rgba(255,255,255,0) 46%, rgba(126,231,135,0.16) 50%, rgba(255,255,255,0) 54%); opacity: 0.28; will-change: transform, opacity; animation: fx-scan 8s linear infinite; }
   @keyframes fx-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-  .fx-noise { background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.08) 0px, rgba(102,226,255,0.08) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 4px); mix-blend-mode: screen; opacity: 0.22; animation: fx-noise 7s ease-in-out infinite alternate; }
+  .fx-noise { background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.10) 0px, rgba(102,226,255,0.10) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 16px); mix-blend-mode: screen; opacity: 0.26; animation: fx-noise 7s ease-in-out infinite alternate; }
   @keyframes fx-noise { 0% { opacity: 0.10; } 100% { opacity: 0.18; } }
   @keyframes sweep { 0% { opacity: 0.25; } 50% { opacity: 0.35; } 100% { opacity: 0.25; } }
   .row { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; color: #d6f2ff; text-shadow: 0 0 6px rgba(102,226,255,0.25), 0 0 8px rgba(255,23,68,0.18); }
