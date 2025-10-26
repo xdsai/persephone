@@ -40,8 +40,7 @@
     play: 'play — open the Persephone story',
     save: 'save — save current Persephone run',
     load: 'load — load saved Persephone run',
-    reset: 'reset — reset Persephone run',
-    'whois nine': 'whois nine — protagonist dossier'
+    reset: 'reset — reset Persephone run'
   };
 
   // Story integration
@@ -271,14 +270,14 @@
               const save = raw ? JSON.parse(raw) : null;
               const gotKey = !!(save?.state?.flags?.ghostKey);
               const opDate = storyMeta?.date || '2077-08-13';
-              const opName = 'Vault Night';
+              const opName = 'vault night';
               const status = gotKey ? 'confirmed: Ghost Key acquired' : 'linked: Ghost Key operation in progress';
               const blurb = gotKey
-                ? 'Protagonist who slipped into Acheron’s vault and pocketed the Ghost Key during Vault Night.'
-                : 'Protagonist preparing a breach on Acheron’s vault to lift the Ghost Key.';
-              writeOut(`name: Nine\nrole: protagonist\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
+                ? "the one who slipped into Acheron’s vault and pocketed the ghost key during Vault Night."
+                : "the one who's preparing a breach on Acheron’s vault to lift the ghost key.";
+              writeOut(`name: alex\nnickname: went by nine\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
             } catch {
-              writeOut('name: Nine\nrole: protagonist\nnotes: linked to the Ghost Key breach on Vault Night.');
+              writeOut('name: nine\nnickname: went by alex\nnotes: linked to the Ghost Key breach on Vault Night.');
             }
           } else if (target === 'johnny') {
             try {
@@ -292,7 +291,7 @@
               }
             } catch { writeOut('record incomplete.'); }
           } else {
-            writeOut('whois: try `whois nine`');
+            writeOut('whois: whois who?');
           }
           break;
         }
@@ -336,11 +335,11 @@
               const opName = 'Vault Night';
               const status = gotKey ? 'confirmed: Ghost Key acquired' : 'linked: Ghost Key operation in progress';
               const blurb = gotKey
-                ? 'Protagonist who slipped into Acheron’s vault and pocketed the Ghost Key during Vault Night.'
-                : 'Protagonist preparing a breach on Acheron’s vault to lift the Ghost Key.';
-              writeOut(`name: Nine\nrole: protagonist\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
+                ? 'the one who slipped into Acheron’s vault and pocketed the ghost key during Vault Night.'
+                : 'the one preparing a breach on Acheron’s vault to lift the Ghost Key.';
+              writeOut(`name: alex\nnickname: went by nine\nop: ${opName} ${opDate}\nstatus: ${status}\nnotes: ${blurb}`);
             } catch {
-              writeOut('name: Nine\nrole: protagonist\nnotes: linked to the Ghost Key breach on Vault Night.');
+              writeOut('name: nine\nnickname: went by alex\nnotes: linked to the Ghost Key breach on Vault Night.');
             }
           } else {
             writeOut(`${cmd}: command not found`);
@@ -632,7 +631,7 @@
   onDestroy(() => { if (uptimeTimer) clearInterval(uptimeTimer); if (typeof window !== 'undefined') window.removeEventListener('persephone:save', loadArgSave); });
 </script>
 
-<div class="terminal-wrap" on:click={focusInput} on:keydown={(e)=>{ if(e.key.length===1 || e.key==='/'|| e.key===' ') focusInput(); }} tabindex="0" role="group" aria-label="web terminal">
+<div class="terminal-wrap" on:click={focusInput} on:keydown={(e)=>{ if(e.key.length===1 || e.key==='/'|| e.key===' ') focusInput(); }} tabindex="-1" role="group" aria-label="web terminal">
   <div class="titlebar">
     <div class="controls"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
     <span class="title" style={`animation: glitch ${barGlitchDur.toFixed(2)}s infinite steps(2); animation-delay:${barGlitchDelay.toFixed(2)}s`}>{username}@{hostname} — {formatPath(state.cwd)}</span>
@@ -680,7 +679,7 @@
             {#if argSave?.state?.loreDiscoveries?.length}
               <ul>
                 {#each resolveLoreList(argSave) as item}
-                  <li><span class="ltitle">{item.title}</span>{#if item.summary}<span class="lsum"> — {item.summary}</span>{/if}</li>
+                  <li><span class="ltitle">{item?.title}</span>{#if item?.summary}<span class="lsum"> — {item?.summary}</span>{/if}</li>
                 {/each}
               </ul>
             {:else}

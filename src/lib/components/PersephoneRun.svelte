@@ -88,7 +88,7 @@
   onMount(() => { init(); });
 
   // Minimal markdown rendering for story text
-  marked.setOptions({ breaks: true, gfm: true, mangle: false, headerIds: false });
+  marked.setOptions({ breaks: true, gfm: true });
   function md(s: string) {
     try {
       const replaced = (s || '').replace(/\bGotara\b/gi, 'Johnny');
@@ -175,7 +175,7 @@
 {:else if !engine}
   <div class="loading">loading story…</div>
 {:else}
-  <div class="wrap" role="group" aria-label="persephone run" on:keydown={onKeydown} tabindex="0" style={`--gdur:${gDur.toFixed(2)}s; --gdelay:${gDelay.toFixed(2)}s`}>
+  <div class="wrap" role="group" aria-label="persephone run" on:keydown={onKeydown} tabindex="-1" style={`--gdur:${gDur.toFixed(2)}s; --gdelay:${gDelay.toFixed(2)}s`}>
     <div class="hud">
       <div class="title">NEON THIRTEEN: PERSEPHONE RUN</div>
       {#if showStatsHUD}

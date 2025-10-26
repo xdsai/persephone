@@ -82,7 +82,6 @@ declare module '$env/static/private' {
 	export const npm_node_execpath: string;
 	export const npm_config_prefix: string;
 	export const CODEX_INTERNAL_ORIGINATOR_OVERRIDE: string;
-	export const NODE_ENV: string;
 }
 
 /**
@@ -168,7 +167,6 @@ declare module '$env/dynamic/private' {
 		npm_node_execpath: string;
 		npm_config_prefix: string;
 		CODEX_INTERNAL_ORIGINATOR_OVERRIDE: string;
-		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: string]: string | undefined;
 	}
