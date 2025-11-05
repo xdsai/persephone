@@ -1,4 +1,5 @@
 import { c as create_ssr_component, o as onDestroy, d as add_attribute, e as escape, f as each, v as validate_component } from "../../chunks/index.js";
+import "powerglitch";
 import "marked";
 /* empty css                                                        */function now() {
   return Date.now();
