@@ -1,6 +1,7 @@
 <script lang="ts">
   import PersephoneRun from '$lib/components/PersephoneRun.svelte';
   import { onMount } from 'svelte';
+  import { PowerGlitch } from 'powerglitch';
   export let data: { post: { title: string; date: string; html: string; slug?: string } | null };
 
   const isPersephonePost = !!data.post && (
@@ -18,6 +19,36 @@
         bannerActive = !!(parsed?.state?.flags?.blogPosted) && parsed?.state?.flags?.blogClean === false;
       }
     } catch {}
+
+    // Add glitch effect to blog title if it's a Persephone post
+    if (isPersephonePost) {
+      setTimeout(() => {
+        PowerGlitch.glitch('.blog h1', {
+          playMode: 'hover',
+          createContainers: true,
+          hideOverflow: false,
+          timing: {
+            duration: 1000,
+          },
+          glitchTimeSpan: {
+            start: 0.4,
+            end: 0.7,
+          },
+          shake: {
+            velocity: 10,
+            amplitudeX: 0.15,
+            amplitudeY: 0.15,
+          },
+          slice: {
+            count: 4,
+            velocity: 12,
+            minHeight: 0.02,
+            maxHeight: 0.12,
+            hueRotate: true,
+          },
+        });
+      }, 100);
+    }
   });
 </script>
 
