@@ -2,6 +2,7 @@
   import { onMount, onDestroy, tick } from 'svelte';
   import type { FsState, FsDir } from '$lib/terminal/fs';
   import { defaultFs, load, save, resolve, find, ensureDir, createFile, createDir, remove, now, resetStorage } from '$lib/terminal/fs';
+  import { PowerGlitch } from 'powerglitch';
 
   let state: FsState = defaultFs();
   let term: HTMLDivElement;
@@ -675,7 +676,7 @@
 {#if showGame}
   <div class="overlay" role="dialog" aria-label="persephone game" on:click|stopPropagation on:keydown|stopPropagation>
     <div class="box" on:click|stopPropagation on:keydown|stopPropagation>
-      <div class="obartitle">NEON THIRTEEN — PERSEPHONE RUN</div>
+      <div class="obartitle">Corrections & Clarifications</div>
       <button class="close" on:click={() => showGame = false} aria-label="close">×</button>
         <div class="content">
           <PersephoneRun src="/story.json" />
@@ -752,11 +753,42 @@
     display: grid;
     grid-template-rows: auto 1fr;
     border-radius: 14px;
-    box-shadow: 0 28px 80px rgba(0,0,0,0.55), 0 0 0 1px var(--cp-soft) inset, 0 0 36px rgba(102,226,255,0.12);
+    box-shadow:
+      0 28px 80px rgba(0,0,0,0.55),
+      0 0 0 1px var(--cp-soft) inset,
+      0 0 36px rgba(102,226,255,0.12),
+      0 0 80px rgba(102,226,255,0.08);
     overflow: hidden;
-    background: 
+    background:
       linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)),
       var(--cp-bg2);
+    animation: crt-flicker 0.15s infinite alternate, crt-glow 4s ease-in-out infinite;
+  }
+
+  /* CRT flicker effect */
+  @keyframes crt-flicker {
+    0% { opacity: 0.98; }
+    100% { opacity: 1; }
+  }
+
+  /* CRT glow pulse */
+  @keyframes crt-glow {
+    0%, 100% {
+      filter: brightness(1) contrast(1.05);
+      box-shadow:
+        0 28px 80px rgba(0,0,0,0.55),
+        0 0 0 1px var(--cp-soft) inset,
+        0 0 36px rgba(102,226,255,0.12),
+        0 0 80px rgba(102,226,255,0.08);
+    }
+    50% {
+      filter: brightness(1.02) contrast(1.08);
+      box-shadow:
+        0 28px 80px rgba(0,0,0,0.55),
+        0 0 0 1px var(--cp-soft) inset,
+        0 0 42px rgba(102,226,255,0.18),
+        0 0 90px rgba(102,226,255,0.12);
+    }
   }
   @media (max-width: 720px) {
     .terminal-wrap {
@@ -790,7 +822,35 @@
   .title { opacity: 0.95; text-shadow: 0 0 10px rgba(102,226,255,0.35), 0 0 8px rgba(120,200,255,0.25); }
   .uptime { opacity: 0.6; }
 
-  .term-pane { position: relative; overflow: hidden; display: grid; grid-template-rows: 1fr; }
+  .term-pane {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: 1fr;
+    height: 100%;
+  }
+
+  .term-pane::before {
+    /* CRT screen curvature effect */
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
+    border-radius: inherit;
+    z-index: 10;
+  }
+
+  .term-pane::after {
+    /* Vignette effect */
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.5), inset 0 0 60px rgba(0,0,0,0.3);
+    border-radius: inherit;
+    z-index: 10;
+  }
   .terminal {
     overflow: auto;
     padding: 16px;
@@ -803,8 +863,16 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-gutter: stable both-edges;
     background-image:
-      /* pronounced cyan scanlines */
-      repeating-linear-gradient(to bottom, rgba(102,226,255,0.10) 0px, rgba(102,226,255,0.10) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 14px),
+      /* More pronounced cyan scanlines */
+      repeating-linear-gradient(to bottom,
+        rgba(102,226,255,0.08) 0px,
+        rgba(102,226,255,0.08) 1px,
+        rgba(0,0,0,0.15) 1px,
+        rgba(0,0,0,0.15) 2px,
+        rgba(102,226,255,0.12) 2px,
+        rgba(102,226,255,0.12) 3px,
+        rgba(0,0,0,0) 3px,
+        rgba(0,0,0,0) 6px),
       /* story-style radial glows */
       radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),
       radial-gradient(600px 240px at 110% 110%, rgba(255,23,68,0.08), rgba(0,0,0,0) 50%),

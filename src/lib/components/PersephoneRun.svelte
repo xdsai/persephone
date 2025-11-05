@@ -3,6 +3,7 @@
   import type { GameJson, GameEngine, Choice, Node, RegularNode, EndingNode, LoreItem } from '$lib/game/engine';
   import { GameEngine as Engine, SAVE_KEY } from '$lib/game/engine';
   import { marked } from 'marked';
+  import { PowerGlitch } from 'powerglitch';
 
   export let json: GameJson | null = null;
   export let src: string = '/story.json';
@@ -85,7 +86,36 @@
     }
   }
 
-  onMount(() => { init(); });
+  onMount(() => {
+    init();
+
+    // Add subtle glitch effect to title
+    setTimeout(() => {
+      PowerGlitch.glitch('.glitch-title', {
+        playMode: 'always',
+        timing: {
+          duration: 4000,
+          iterations: Infinity,
+        },
+        glitchTimeSpan: {
+          start: 0.8,
+          end: 0.95,
+        },
+        shake: {
+          velocity: 8,
+          amplitudeX: 0.1,
+          amplitudeY: 0.08,
+        },
+        slice: {
+          count: 3,
+          velocity: 8,
+          minHeight: 0.01,
+          maxHeight: 0.08,
+          hueRotate: true,
+        },
+      });
+    }, 200);
+  });
 
   // Minimal markdown rendering for story text
   marked.setOptions({ breaks: true, gfm: true });
@@ -177,7 +207,7 @@
 {:else}
   <div class="wrap" role="group" aria-label="persephone run" on:keydown={onKeydown} tabindex="-1" style={`--gdur:${gDur.toFixed(2)}s; --gdelay:${gDelay.toFixed(2)}s`}>
     <div class="hud">
-      <div class="title">NEON THIRTEEN: PERSEPHONE RUN</div>
+      <div class="title glitch-title">Corrections & Clarifications</div>
       {#if showStatsHUD}
       <div class="stats">
         <span title="heat">♨ {engine.getState().heat}</span>
