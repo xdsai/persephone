@@ -89,28 +89,28 @@
   onMount(() => {
     init();
 
-    // Add subtle glitch effect to title
+    // Add glitch effect to title
     setTimeout(() => {
       PowerGlitch.glitch('.glitch-title', {
         playMode: 'always',
         timing: {
-          duration: 4000,
+          duration: 3000,
           iterations: Infinity,
         },
         glitchTimeSpan: {
-          start: 0.8,
-          end: 0.95,
+          start: 0.5,
+          end: 0.8,
         },
         shake: {
-          velocity: 8,
-          amplitudeX: 0.1,
-          amplitudeY: 0.08,
+          velocity: 15,
+          amplitudeX: 0.2,
+          amplitudeY: 0.15,
         },
         slice: {
-          count: 3,
-          velocity: 8,
-          minHeight: 0.01,
-          maxHeight: 0.08,
+          count: 6,
+          velocity: 15,
+          minHeight: 0.02,
+          maxHeight: 0.15,
           hueRotate: true,
         },
       });

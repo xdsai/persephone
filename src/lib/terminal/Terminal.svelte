@@ -827,7 +827,6 @@
     overflow: hidden;
     display: grid;
     grid-template-rows: 1fr;
-    height: 100%;
   }
 
   .term-pane::before {
@@ -836,7 +835,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 100%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.25) 100%);
     border-radius: inherit;
     z-index: 10;
   }
@@ -847,7 +846,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    box-shadow: inset 0 0 120px rgba(0,0,0,0.5), inset 0 0 60px rgba(0,0,0,0.3);
+    box-shadow: inset 0 0 150px rgba(0,0,0,0.65), inset 0 0 80px rgba(0,0,0,0.4);
     border-radius: inherit;
     z-index: 10;
   }
@@ -863,21 +862,21 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-gutter: stable both-edges;
     background-image:
-      /* More pronounced cyan scanlines */
+      /* Intense cyan scanlines */
       repeating-linear-gradient(to bottom,
-        rgba(102,226,255,0.08) 0px,
-        rgba(102,226,255,0.08) 1px,
-        rgba(0,0,0,0.15) 1px,
-        rgba(0,0,0,0.15) 2px,
-        rgba(102,226,255,0.12) 2px,
-        rgba(102,226,255,0.12) 3px,
+        rgba(102,226,255,0.12) 0px,
+        rgba(102,226,255,0.12) 1px,
+        rgba(0,0,0,0.2) 1px,
+        rgba(0,0,0,0.2) 2px,
+        rgba(102,226,255,0.15) 2px,
+        rgba(102,226,255,0.15) 3px,
         rgba(0,0,0,0) 3px,
         rgba(0,0,0,0) 6px),
       /* story-style radial glows */
-      radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),
-      radial-gradient(600px 240px at 110% 110%, rgba(255,23,68,0.08), rgba(0,0,0,0) 50%),
+      radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.12), rgba(0,0,0,0) 40%),
+      radial-gradient(600px 240px at 110% 110%, rgba(255,23,68,0.12), rgba(0,0,0,0) 50%),
       /* story-style vertical wash */
-      linear-gradient(180deg, rgba(255,23,68,0.06), rgba(102,226,255,0.08) 50%, rgba(0,0,0,0)),
+      linear-gradient(180deg, rgba(255,23,68,0.08), rgba(102,226,255,0.12) 50%, rgba(0,0,0,0)),
       var(--cp-bg2);
     background-blend-mode: screen, normal, normal, normal, normal;
   }
