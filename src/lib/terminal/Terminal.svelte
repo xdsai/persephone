@@ -2,6 +2,7 @@
   import { onMount, onDestroy, tick } from 'svelte';
   import type { FsState, FsDir } from '$lib/terminal/fs';
   import { defaultFs, load, save, resolve, find, ensureDir, createFile, createDir, remove, now, resetStorage } from '$lib/terminal/fs';
+  import { PowerGlitch } from 'powerglitch';
 
   let state: FsState = defaultFs();
   let term: HTMLDivElement;
@@ -646,6 +647,88 @@
     update();
     uptimeTimer = (setInterval(update, 10000) as unknown as number);
     if (typeof window !== 'undefined') window.addEventListener('persephone:save', loadArgSave);
+
+    // Apply powerglitch effects for enhanced CRT vibe
+    // Glitch the title bar with moderate intensity
+    PowerGlitch.glitch('.titlebar', {
+      playMode: 'always',
+      createContainers: true,
+      hideOverflow: false,
+      timing: {
+        duration: 2000,
+        iterations: Infinity,
+      },
+      glitchTimeSpan: {
+        start: 0.5,
+        end: 0.7,
+      },
+      shake: {
+        velocity: 15,
+        amplitudeX: 0.2,
+        amplitudeY: 0.2,
+      },
+      slice: {
+        count: 6,
+        velocity: 15,
+        minHeight: 0.02,
+        maxHeight: 0.15,
+        hueRotate: true,
+      },
+    });
+
+    // Glitch the terminal wrap with subtle effects
+    PowerGlitch.glitch('.terminal-wrap', {
+      playMode: 'always',
+      createContainers: true,
+      hideOverflow: false,
+      timing: {
+        duration: 4000,
+        iterations: Infinity,
+      },
+      glitchTimeSpan: {
+        start: 0.6,
+        end: 0.75,
+      },
+      shake: {
+        velocity: 8,
+        amplitudeX: 0.1,
+        amplitudeY: 0.1,
+      },
+      slice: {
+        count: 8,
+        velocity: 10,
+        minHeight: 0.01,
+        maxHeight: 0.10,
+        hueRotate: true,
+      },
+    });
+
+    // Glitch the terminal content area with light effects
+    PowerGlitch.glitch('.terminal', {
+      playMode: 'always',
+      createContainers: true,
+      hideOverflow: true,
+      timing: {
+        duration: 3000,
+        iterations: Infinity,
+      },
+      glitchTimeSpan: {
+        start: 0.7,
+        end: 0.85,
+      },
+      shake: {
+        velocity: 5,
+        amplitudeX: 0.05,
+        amplitudeY: 0.05,
+      },
+      slice: {
+        count: 4,
+        velocity: 8,
+        minHeight: 0.01,
+        maxHeight: 0.08,
+        hueRotate: true,
+      },
+    });
   });
 
   onDestroy(() => { if (uptimeTimer) clearInterval(uptimeTimer); if (typeof window !== 'undefined') window.removeEventListener('persephone:save', loadArgSave); });
