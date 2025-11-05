@@ -648,85 +648,30 @@
     uptimeTimer = (setInterval(update, 10000) as unknown as number);
     if (typeof window !== 'undefined') window.addEventListener('persephone:save', loadArgSave);
 
-    // Apply powerglitch effects for enhanced CRT vibe
-    // Glitch the title bar with moderate intensity
-    PowerGlitch.glitch('.titlebar', {
+    // Apply very subtle powerglitch effect only to title text
+    PowerGlitch.glitch('.title-container', {
       playMode: 'always',
-      createContainers: true,
+      createContainers: false,
       hideOverflow: false,
       timing: {
-        duration: 2000,
+        duration: 8000,
         iterations: Infinity,
       },
       glitchTimeSpan: {
-        start: 0.5,
-        end: 0.7,
+        start: 0.85,
+        end: 0.98,
       },
       shake: {
-        velocity: 15,
-        amplitudeX: 0.2,
-        amplitudeY: 0.2,
+        velocity: 2,
+        amplitudeX: 0.03,
+        amplitudeY: 0.01,
       },
       slice: {
-        count: 6,
-        velocity: 15,
-        minHeight: 0.02,
-        maxHeight: 0.15,
-        hueRotate: true,
-      },
-    });
-
-    // Glitch the terminal wrap with subtle effects
-    PowerGlitch.glitch('.terminal-wrap', {
-      playMode: 'always',
-      createContainers: true,
-      hideOverflow: false,
-      timing: {
-        duration: 4000,
-        iterations: Infinity,
-      },
-      glitchTimeSpan: {
-        start: 0.6,
-        end: 0.75,
-      },
-      shake: {
-        velocity: 8,
-        amplitudeX: 0.1,
-        amplitudeY: 0.1,
-      },
-      slice: {
-        count: 8,
-        velocity: 10,
-        minHeight: 0.01,
-        maxHeight: 0.10,
-        hueRotate: true,
-      },
-    });
-
-    // Glitch the terminal content area with light effects
-    PowerGlitch.glitch('.terminal', {
-      playMode: 'always',
-      createContainers: true,
-      hideOverflow: true,
-      timing: {
-        duration: 3000,
-        iterations: Infinity,
-      },
-      glitchTimeSpan: {
-        start: 0.7,
-        end: 0.85,
-      },
-      shake: {
-        velocity: 5,
-        amplitudeX: 0.05,
-        amplitudeY: 0.05,
-      },
-      slice: {
-        count: 4,
-        velocity: 8,
-        minHeight: 0.01,
-        maxHeight: 0.08,
-        hueRotate: true,
+        count: 2,
+        velocity: 3,
+        minHeight: 0.005,
+        maxHeight: 0.03,
+        hueRotate: false,
       },
     });
   });
@@ -737,7 +682,9 @@
 <div class="terminal-wrap" on:click={focusInput} on:keydown={(e)=>{ if(e.key.length===1 || e.key==='/'|| e.key===' ') focusInput(); }} tabindex="-1" role="group" aria-label="web terminal">
   <div class="titlebar">
     <div class="controls"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
-    <span class="title" style={`animation: glitch ${barGlitchDur.toFixed(2)}s infinite steps(2); animation-delay:${barGlitchDelay.toFixed(2)}s`}>{username}@{hostname} — {formatPath(state.cwd)}</span>
+    <div class="title-container">
+      <span class="title" style={`animation: glitch ${barGlitchDur.toFixed(2)}s infinite steps(2); animation-delay:${barGlitchDelay.toFixed(2)}s`}>{username}@{hostname} — {formatPath(state.cwd)}</span>
+    </div>
     <span class="uptime">up {uptimeMinutes} min</span>
   </div>
   <div class="term-pane">
@@ -870,6 +817,7 @@
   .dot.r { background: #ff5f57; }
   .dot.y { background: #ffbd2e; }
   .dot.g { background: #28c840; }
+  .title-container { display: grid; grid-template-columns: 1fr; }
   .title { opacity: 0.95; text-shadow: 0 0 10px rgba(102,226,255,0.35), 0 0 8px rgba(120,200,255,0.25); }
   .uptime { opacity: 0.6; }
 
@@ -886,34 +834,86 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-gutter: stable both-edges;
     background-image:
-      /* pronounced cyan scanlines */
-      repeating-linear-gradient(to bottom, rgba(102,226,255,0.10) 0px, rgba(102,226,255,0.10) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 14px),
+      /* Enhanced horizontal scanlines - tighter spacing for CRT effect */
+      repeating-linear-gradient(to bottom, rgba(0,0,0,0.35) 0px, rgba(0,0,0,0.35) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 3px),
+      /* Cyan phosphor glow scanlines */
+      repeating-linear-gradient(to bottom, rgba(102,226,255,0.12) 0px, rgba(102,226,255,0.12) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 8px),
+      /* Vignette effect for CRT curvature */
+      radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.25) 90%, rgba(0,0,0,0.45) 100%),
       /* story-style radial glows */
       radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),
       radial-gradient(600px 240px at 110% 110%, rgba(255,23,68,0.08), rgba(0,0,0,0) 50%),
       /* story-style vertical wash */
       linear-gradient(180deg, rgba(255,23,68,0.06), rgba(102,226,255,0.08) 50%, rgba(0,0,0,0)),
       var(--cp-bg2);
-    background-blend-mode: screen, normal, normal, normal, normal;
+    background-blend-mode: normal, screen, normal, normal, normal, normal, normal;
   }
   /* Neon FX overlays — outside the scroll container to avoid affecting layout */
   .fx { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; }
-  .fx-scan { background: linear-gradient(0deg, rgba(255,255,255,0) 46%, rgba(126,231,135,0.16) 50%, rgba(255,255,255,0) 54%); opacity: 0.28; will-change: transform, opacity; animation: fx-scan 8s linear infinite; }
-  @keyframes fx-scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-  .fx-noise { background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.10) 0px, rgba(102,226,255,0.10) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 16px); mix-blend-mode: screen; opacity: 0.26; animation: fx-noise 7s ease-in-out infinite alternate; }
-  @keyframes fx-noise { 0% { opacity: 0.10; } 100% { opacity: 0.18; } }
+  .fx-scan {
+    background: linear-gradient(0deg, rgba(255,255,255,0) 40%, rgba(126,231,135,0.22) 50%, rgba(255,255,255,0) 60%);
+    opacity: 0.35;
+    will-change: transform, opacity;
+    animation: fx-scan 6s linear infinite;
+    box-shadow: 0 0 100px 20px rgba(102,226,255,0.15) inset;
+  }
+  @keyframes fx-scan {
+    0% { transform: translateY(-100%); opacity: 0.2; }
+    50% { opacity: 0.35; }
+    100% { transform: translateY(100%); opacity: 0.2; }
+  }
+  .fx-noise {
+    background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.12) 0px, rgba(102,226,255,0.12) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 8px);
+    mix-blend-mode: screen;
+    opacity: 0.32;
+    animation: fx-noise 5s ease-in-out infinite alternate;
+  }
+  @keyframes fx-noise { 0% { opacity: 0.18; } 100% { opacity: 0.32; } }
   @keyframes sweep { 0% { opacity: 0.25; } 50% { opacity: 0.35; } 100% { opacity: 0.25; } }
-  .row { white-space: pre-wrap; overflow-wrap: anywhere; word-break: break-word; color: #d6f2ff; text-shadow: 0 0 6px rgba(102,226,255,0.25), 0 0 8px rgba(255,23,68,0.18); }
+  .row {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    color: #d6f2ff;
+    /* Enhanced chromatic aberration for CRT effect */
+    text-shadow:
+      0.5px 0 0 rgba(255,23,68,0.35),      /* red shift right */
+      -0.5px 0 0 rgba(102,226,255,0.35),   /* cyan shift left */
+      0 0 8px rgba(102,226,255,0.3),       /* cyan glow */
+      0 0 12px rgba(255,23,68,0.2),        /* red glow */
+      0 0 4px rgba(102,226,255,0.5);       /* bright cyan core */
+  }
   .row + .row { margin-top: 6px; }
   /* Ensure dynamic HTML inside rows is styled (use :global for injected markup) */
   .row :global(.cmdline) { color: #c7f0ff; text-shadow: 0 0 10px rgba(102,226,255,0.55); }
   .row :global(.cmdline .cmdtext) { color: #e9fbff; opacity: 0.95; text-shadow: 0 0 10px rgba(102,226,255,0.55); }
   .row.input { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px; }
-  .readline { width: 100%; background: transparent; color: #e7e4ff; border: none; outline: none; font: inherit; caret-color: #8fe9ff; text-shadow: 0 0 6px rgba(102,226,255,0.35); }
+  .readline {
+    width: 100%;
+    background: transparent;
+    color: #e7e4ff;
+    border: none;
+    outline: none;
+    font: inherit;
+    caret-color: #8fe9ff;
+    /* Chromatic aberration on input text */
+    text-shadow:
+      0.4px 0 0 rgba(255,23,68,0.3),
+      -0.4px 0 0 rgba(102,226,255,0.3),
+      0 0 6px rgba(102,226,255,0.4);
+  }
   .readline::selection { background: rgba(102,226,255,0.25); }
   .end { height: 1px; }
 
-  .prompt { color: #a8f2ff; text-shadow: 0 0 10px rgba(102,226,255,0.6), 0 0 6px rgba(255,23,68,0.25); }
+  .prompt {
+    color: #a8f2ff;
+    /* Enhanced chromatic aberration on prompt */
+    text-shadow:
+      0.6px 0 0 rgba(255,23,68,0.4),
+      -0.6px 0 0 rgba(102,226,255,0.4),
+      0 0 10px rgba(102,226,255,0.65),
+      0 0 6px rgba(255,23,68,0.3);
+  }
   .g { color: #89f7a1; }
   .y { color: #ffd27e; }
   :global(.cmdline) { color: #b9f0ff; text-shadow: 0 0 12px rgba(102,226,255,0.65); }
