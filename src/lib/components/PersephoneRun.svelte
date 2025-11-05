@@ -3,6 +3,7 @@
   import type { GameJson, GameEngine, Choice, Node, RegularNode, EndingNode, LoreItem } from '$lib/game/engine';
   import { GameEngine as Engine, SAVE_KEY } from '$lib/game/engine';
   import { marked } from 'marked';
+  import { PowerGlitch } from 'powerglitch';
 
   export let json: GameJson | null = null;
   export let src: string = '/story.json';
@@ -85,7 +86,64 @@
     }
   }
 
-  onMount(() => { init(); });
+  onMount(() => {
+    init();
+
+    // Initialize powerglitch effects
+    setTimeout(() => {
+      PowerGlitch.glitch('.glitch-title', {
+        playMode: 'always',
+        createContainers: true,
+        hideOverflow: false,
+        timing: {
+          duration: 2000,
+          iterations: Infinity,
+        },
+        glitchTimeSpan: {
+          start: 0.5,
+          end: 0.7,
+        },
+        shake: {
+          velocity: 15,
+          amplitudeX: 0.2,
+          amplitudeY: 0.2,
+        },
+        slice: {
+          count: 6,
+          velocity: 15,
+          minHeight: 0.02,
+          maxHeight: 0.15,
+          hueRotate: true,
+        },
+      });
+
+      PowerGlitch.glitch('.glitch-ending', {
+        playMode: 'always',
+        createContainers: true,
+        hideOverflow: false,
+        timing: {
+          duration: 3000,
+          iterations: Infinity,
+        },
+        glitchTimeSpan: {
+          start: 0.6,
+          end: 0.9,
+        },
+        shake: {
+          velocity: 10,
+          amplitudeX: 0.3,
+          amplitudeY: 0.3,
+        },
+        slice: {
+          count: 8,
+          velocity: 20,
+          minHeight: 0.02,
+          maxHeight: 0.2,
+          hueRotate: true,
+        },
+      });
+    }, 100);
+  });
 
   // Minimal markdown rendering for story text
   marked.setOptions({ breaks: true, gfm: true });
@@ -177,7 +235,7 @@
 {:else}
   <div class="wrap" role="group" aria-label="persephone run" on:keydown={onKeydown} tabindex="-1" style={`--gdur:${gDur.toFixed(2)}s; --gdelay:${gDelay.toFixed(2)}s`}>
     <div class="hud">
-      <div class="title">NEON THIRTEEN: PERSEPHONE RUN</div>
+      <div class="title glitch-title">NEON THIRTEEN: PERSEPHONE RUN</div>
       {#if showStatsHUD}
       <div class="stats">
         <span title="heat">♨ {engine.getState().heat}</span>
@@ -209,7 +267,7 @@
     <div class="pane">
       {#key viewKey}
         {#if isEnding()}
-        <h2 class="ending">{currentTitle()}</h2>
+        <h2 class="ending glitch-ending">{currentTitle()}</h2>
         <div class="text">{@html md(currentText())}</div>
           <div class="choices ending">
             <button class="btn" on:click={() => restartWithMode(true)}>Restart (Short Run)</button>
