@@ -648,30 +648,57 @@
     uptimeTimer = (setInterval(update, 10000) as unknown as number);
     if (typeof window !== 'undefined') window.addEventListener('persephone:save', loadArgSave);
 
-    // Apply very subtle powerglitch effect only to title text
+    // Apply moderate powerglitch effect to title text
     PowerGlitch.glitch('.title-container', {
       playMode: 'always',
       createContainers: false,
       hideOverflow: false,
       timing: {
-        duration: 8000,
+        duration: 4000,
         iterations: Infinity,
       },
       glitchTimeSpan: {
-        start: 0.85,
-        end: 0.98,
+        start: 0.7,
+        end: 0.9,
       },
       shake: {
-        velocity: 2,
-        amplitudeX: 0.03,
-        amplitudeY: 0.01,
+        velocity: 8,
+        amplitudeX: 0.15,
+        amplitudeY: 0.08,
       },
       slice: {
-        count: 2,
-        velocity: 3,
-        minHeight: 0.005,
-        maxHeight: 0.03,
-        hueRotate: false,
+        count: 5,
+        velocity: 12,
+        minHeight: 0.02,
+        maxHeight: 0.12,
+        hueRotate: true,
+      },
+    });
+
+    // Apply glitch effect to terminal-wrap for overall screen distortion
+    PowerGlitch.glitch('.terminal-wrap', {
+      playMode: 'always',
+      createContainers: false,
+      hideOverflow: false,
+      timing: {
+        duration: 6000,
+        iterations: Infinity,
+      },
+      glitchTimeSpan: {
+        start: 0.75,
+        end: 0.92,
+      },
+      shake: {
+        velocity: 5,
+        amplitudeX: 0.08,
+        amplitudeY: 0.05,
+      },
+      slice: {
+        count: 3,
+        velocity: 8,
+        minHeight: 0.01,
+        maxHeight: 0.08,
+        hueRotate: true,
       },
     });
   });
@@ -705,7 +732,7 @@
 {#if showGame}
   <div class="overlay" role="dialog" aria-label="persephone game" on:click|stopPropagation on:keydown|stopPropagation>
     <div class="box" on:click|stopPropagation on:keydown|stopPropagation>
-      <div class="obartitle">NEON THIRTEEN — PERSEPHONE RUN</div>
+      <div class="obartitle">CORRECTIONS & CLARIFICATIONS</div>
       <button class="close" on:click={() => showGame = false} aria-label="close">×</button>
         <div class="content">
           <PersephoneRun src="/story.json" />
@@ -835,40 +862,42 @@
     scrollbar-gutter: stable both-edges;
     background-image:
       /* Enhanced horizontal scanlines - tighter spacing for CRT effect */
-      repeating-linear-gradient(to bottom, rgba(0,0,0,0.35) 0px, rgba(0,0,0,0.35) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 3px),
+      repeating-linear-gradient(to bottom, rgba(0,0,0,0.45) 0px, rgba(0,0,0,0.45) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 3px),
       /* Cyan phosphor glow scanlines */
-      repeating-linear-gradient(to bottom, rgba(102,226,255,0.12) 0px, rgba(102,226,255,0.12) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 8px),
-      /* Vignette effect for CRT curvature */
-      radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.25) 90%, rgba(0,0,0,0.45) 100%),
+      repeating-linear-gradient(to bottom, rgba(102,226,255,0.15) 0px, rgba(102,226,255,0.15) 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 8px),
+      /* Strong vignette effect for CRT curvature and screen burn */
+      radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.35) 75%, rgba(0,0,0,0.65) 95%, rgba(0,0,0,0.85) 100%),
+      /* Corner darkening for CRT depth */
+      radial-gradient(ellipse 120% 100% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0.5) 100%),
       /* story-style radial glows */
       radial-gradient(800px 300px at 10% -10%, rgba(102,226,255,0.08), rgba(0,0,0,0) 40%),
       radial-gradient(600px 240px at 110% 110%, rgba(255,23,68,0.08), rgba(0,0,0,0) 50%),
       /* story-style vertical wash */
       linear-gradient(180deg, rgba(255,23,68,0.06), rgba(102,226,255,0.08) 50%, rgba(0,0,0,0)),
       var(--cp-bg2);
-    background-blend-mode: normal, screen, normal, normal, normal, normal, normal;
+    background-blend-mode: normal, screen, normal, multiply, normal, normal, normal, normal;
   }
   /* Neon FX overlays — outside the scroll container to avoid affecting layout */
   .fx { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; }
   .fx-scan {
-    background: linear-gradient(0deg, rgba(255,255,255,0) 40%, rgba(126,231,135,0.22) 50%, rgba(255,255,255,0) 60%);
-    opacity: 0.35;
+    background: linear-gradient(0deg, rgba(255,255,255,0) 35%, rgba(126,231,135,0.28) 50%, rgba(255,255,255,0) 65%);
+    opacity: 0.4;
     will-change: transform, opacity;
-    animation: fx-scan 6s linear infinite;
-    box-shadow: 0 0 100px 20px rgba(102,226,255,0.15) inset;
+    animation: fx-scan 5s linear infinite;
+    box-shadow: 0 0 120px 30px rgba(102,226,255,0.2) inset;
   }
   @keyframes fx-scan {
-    0% { transform: translateY(-100%); opacity: 0.2; }
-    50% { opacity: 0.35; }
-    100% { transform: translateY(100%); opacity: 0.2; }
+    0% { transform: translateY(-100%); opacity: 0.25; }
+    50% { opacity: 0.4; }
+    100% { transform: translateY(100%); opacity: 0.25; }
   }
   .fx-noise {
-    background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.12) 0px, rgba(102,226,255,0.12) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 8px);
+    background: repeating-linear-gradient(to bottom, rgba(102,226,255,0.15) 0px, rgba(102,226,255,0.15) 1px, rgba(0,0,0,0) 1px, rgba(0,0,0,0) 6px);
     mix-blend-mode: screen;
-    opacity: 0.32;
-    animation: fx-noise 5s ease-in-out infinite alternate;
+    opacity: 0.4;
+    animation: fx-noise 4s ease-in-out infinite alternate;
   }
-  @keyframes fx-noise { 0% { opacity: 0.18; } 100% { opacity: 0.32; } }
+  @keyframes fx-noise { 0% { opacity: 0.25; } 100% { opacity: 0.4; } }
   @keyframes sweep { 0% { opacity: 0.25; } 50% { opacity: 0.35; } 100% { opacity: 0.25; } }
   .row {
     white-space: pre-wrap;

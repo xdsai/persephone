@@ -177,7 +177,7 @@
 {:else}
   <div class="wrap" role="group" aria-label="persephone run" on:keydown={onKeydown} tabindex="-1" style={`--gdur:${gDur.toFixed(2)}s; --gdelay:${gDelay.toFixed(2)}s`}>
     <div class="hud">
-      <div class="title">NEON THIRTEEN: PERSEPHONE RUN</div>
+      <div class="title">CORRECTIONS & CLARIFICATIONS</div>
       {#if showStatsHUD}
       <div class="stats">
         <span title="heat">♨ {engine.getState().heat}</span>
